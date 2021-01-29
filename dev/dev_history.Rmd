@@ -21,9 +21,10 @@ fusen::fill_description(
   fields = list(
     Title = "Download CWT release or recovery data from RMIS",
     Description = "Use Rmd First method to build your package. Start your package with documentation. Everything can be set from a Rmd file in your project.",
-    `Authors@R` = c(
-      person("Ben", "Cox", email = "benjamin.cox@dfw.wa.gov", role = c("aut", "cre"))
-    )
+    `Authors@R` = c(person("Ben", "Cox", email = "benjamin.cox@dfw.wa.gov", role = c("aut", "cre"))),
+    `Imports`="lubridate",
+    `@importFrom`="magrittr %>%, RCurl getURL",
+    `Depends`="tidyverse, foreach, parallel, doParallel"
   ),
   overwrite=TRUE
 )
@@ -32,32 +33,184 @@ usethis::use_mit_license("Ben Cox")
 ```
 
 ```{r function-1}
+#' Download release data from RMIS
+#'
+#' @param url the url to the full CWT release data set on the RMIS ftp server
+#' @param dir Directory to save downloaded file. If `NULL` (the default), saves to working directory.
+#'
+#' @return `NULL` 
+#' @return Saves file locally.
+#'
+#' @export
+#'
+#' @examples download_releases()
+download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
+  if(is.null(dir)) dir <- getwd()
+  download.file(url=url, 
+                destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
+                quiet=TRUE)
+}
+
+```
+
+```{r function-2}
+#' Download RMIS LUTs
+#' @description Downloads lookup tables from RMIS ftp server.
+#' @param url url to RMIS ftp serer 
+#' @param dir Directory to save RMIS lookup tables. If `NULL` (the default) puts luts in a RMIS_LUTs folder in working directory.
+#' @return NULL
+#' @return Downloads lookup tables from RMIS into chosen dir
+#' @export
+#' @examples
+download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
+  
+  if(is.null(dir)) {dir <- "RMIS_LUTs/"}
+  
+    if(!dir.exists(dir)) {
+      dir.create(dir) }
+
+  lut_dir <- dir
+  
+  lut_filenames <- c("LC041_ALL_FULLSET.zip",
+                    "run.zip",
+                    "species.zip",
+                    "study_type.zip",
+                    "marks.zip",
+                    "location_type.zip",
+                    "gear.zip", 
+                    "fishery.zip",
+                    "period.zip",
+                    "adclip_selective_fishery.csv"
+                    )
+
+    ftp_paths <- paste0(url, lut_filenames)
+    dest_paths <- paste0(dir, lut_filenames)                 
+    
+       cl <- makeCluster(detectCores())
+  
+     registerDoParallel(cl=cl)
+
+  foreach(i=seq_along(ftp_paths)) %dopar% {
+    download.file(url=ftp_paths[i], destfile=dest_paths[i], quiet=TRUE)
+    } %>% 
+      invisible()
+    stopCluster(cl)
+} 
+
+```
+
+```{r function-3}
+#' Make a list of files to download
+#' @description Creates a list of files to download for desired years of CWT recovery data.
+#' @param startYear First year of desired CWT recovery data
+#' @param endYear  Last year of desired CWT recovery data
+#' @param RMIS_url URL to RMIS ftp server
+#' @param temp_dir File to hold downloaded csv's
+#'
+#' @return A list with download urls for each file and destination paths for each file
+#' @export
+#' @examples
+make_file_list <- function(startYear, 
+                              endYear,
+                              RMIS_url="ftp://ftp.rmpc.org/pub/data/", 
+                              dir=NULL) {
+# # Error message
+#   if(is.null(startYear) | is.null(endYear)) {
+# 
+#     return(message("ERROR: Please supply start and/or end year"))
+#   }
+  
+  # load pkgs required for this function
+    #using("RCurl", "tidyverse")
+  
+# Get filenames in the RMIS ftp directory - Takes a minute
+ftp_names <- RCurl::getURL(RMIS_url, dirlistonly = TRUE)
+
+# Make a vector of filenames, separating by line breaks ("\n")
+  filenames <- strsplit(ftp_names, "\n") [[1]]
+
+# Only want the csv files, use the regex below to grab only files beginning with RC041_ and ending with .csv
+    # Changed to .zip to help with download speed. readr can read from local zips but not url .zips
+  csvs <- filenames[grep("^RC041_.*\\.zip", filenames)]
+
+  #  Only grab ODFW/WDFW files, replace line 22 with:
+  #   csvs <-  filenames[grep("^RC041_ODFW.*\\.csv | ^RC041_WDFW.*\\.csv", filenames,fixed=F)]
+
+# Extract the years for each recovery filename,convert to number. used to filter out years we don't need
+  yrs <- substr(csvs, start=nchar(csvs)-8, nchar(csvs)-5) %>% as.integer
+
+# Subset the csv filenames for only the years we want, drop the "\r" from filenames (for when we go to download) 
+  files <- csvs[which(yrs >= startYear & yrs<=endYear)] %>% substr(1, nchar(.)-1)
+
+# Return the list with a vector of file urls and the local path to save the downloaded files
+  list(download_urls=paste0(RMIS_url, files), local_paths=paste0(dir, files))
+}
+
+```
+
+```{r function-4}
+#' Download CWT recoveries
+#'
+#' @param start_yr First year of recoveries 
+#' @param end_yr  Last year of recoveries
+#' @param dir Directory to save downloaded files, if `NULL` creates Data/Recoveries/temp in working directory.
+#' @param by_brood  `TRUE` (default) if start and end years are in terms of brood years
+#'
+#' @return `NULL`
+#' @return Downloads .zip files of recovery data to local dir
+#' @export
+#'
+#' @examples
+download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
+
+  if(is.null(dir)) dir <- "Data/Recoveries/temp/"
+  if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
+
+
+  if(by_brood){
+    
+  startYear <- start_yr + 2
+  endYear <- end_yr + 7
+  
+  }else{
+    startYear <- start_yr
+    endYear <- end_yr
+  }
+  
+  curYear <- lubridate::year(Sys.Date())
+  
+  if (startYear > (curYear-1) || (endYear > (curYear-1))){
+    warning(paste0("Chosen brood year(s) may not be fully reported to RMIS"))
+    }
+  
+  # BUILD TEST FOR COMPLETED BROODs- maybe year(sys.Date()-1)?
+  #if(endYear>)
+   # Create list with the file  paths
+      file_list <- make_file_list(startYear, endYear, dir=dir)
+
+    # Set up clusters for parallel downloads
+      cl <- makeCluster(detectCores())
+        
+      registerDoParallel(cl=cl)
+      
+message("This will take a while.")
+
+  # Do download, read and combine the csvs with parallel for loop
+     foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
+
+      # Download the files from download urls, save them to the local paths
+       download.file(url=file_list$download_urls[i], destfile=file_list$local_paths[i], quiet=TRUE)
+       
+    }
+    
+stopCluster(cl)
+
+}
+
 
 
 ```
 
-```{r examples}
-
-```
-
-```{r tests}
-test_that("my_median works properly and show error if needed", {
-  expect_true(my_median(1:12) == 6.5)
-  expect_error(my_median("text"))
-})
-```
-
-
-```{r function-1}
-
-```
-
-```{r examples-1}
-
-```
-
-```{r tests-1}
-```
 
 # There can be development actions
 

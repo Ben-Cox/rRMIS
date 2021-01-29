@@ -1,2 +1,5 @@
 
 dev
+^rRMIS\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
