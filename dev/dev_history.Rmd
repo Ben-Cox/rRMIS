@@ -11,7 +11,7 @@ library(testthat)
 
 <!--
 # Description of your package
-
+A change
 This will fill the description of your package.
 Add this chunk using `fusen::description_chunk()`
 --> 
