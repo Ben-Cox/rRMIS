@@ -11,7 +11,7 @@
 #'
 download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
 
-  if(is.null(dir)) dir <- "Data/Recoveries/temp/"
+  if(is.null(dir)) dir <- "Data/Recoveries"
   if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
 
 
@@ -47,13 +47,11 @@ message("This will take a while.")
      foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
 
       # Download the files from download urls, save them to the local paths
-       download.file(url=file_list$download_urls[i], destfile=file_list$local_paths[i], quiet=TRUE)
+       download.file(url=file_list$download_urls[i], destfile=file_list$files[i], quiet=TRUE)
        
     }
     
 stopCluster(cl)
 
 }
-
-
 

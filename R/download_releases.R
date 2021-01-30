@@ -10,7 +10,7 @@
 #'
 #' @examples download_releases()
 download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
-  if(is.null(dir)) dir <- getwd()
+  if(is.null(dir)) dir <- "Data"
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)

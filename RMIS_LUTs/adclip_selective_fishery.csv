@@ -1,0 +1,4 @@
+lookup_type, lookup_code, description
+"adclip_selective_fishery","M","Mixed Selective Fishery"
+"adclip_selective_fishery","N","Non-Adclip Selective Fishery"
+"adclip_selective_fishery","S","Adcip Selective Fishery"

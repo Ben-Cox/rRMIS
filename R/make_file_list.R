@@ -4,7 +4,7 @@
 #' @param endYear  Last year of desired CWT recovery data
 #' @param RMIS_url URL to RMIS ftp server
 #' @param temp_dir File to hold downloaded csv's
-#'
+#' @importFrom RCurl getURL
 #' @return A list with download urls for each file and destination paths for each file
 #' @export
 make_file_list <- function(startYear, 
@@ -40,6 +40,6 @@ ftp_names <- RCurl::getURL(RMIS_url, dirlistonly = TRUE)
   files <- csvs[which(yrs >= startYear & yrs<=endYear)] %>% substr(1, nchar(.)-1)
 
 # Return the list with a vector of file urls and the local path to save the downloaded files
-  list(download_urls=paste0(RMIS_url, files), local_paths=paste0(dir, files))
+  list(download_urls=paste0(RMIS_url, files), files=file.path(dir,files))
 }
 

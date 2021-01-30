@@ -19,17 +19,23 @@ Add this chunk using `fusen::description_chunk()`
 # Describe your package
 fusen::fill_description(
   fields = list(
-    Title = "Download CWT release or recovery data from RMIS",
-    Description = "Use Rmd First method to build your package. Start your package with documentation. Everything can be set from a Rmd file in your project.",
+    Title = "rRMIS",
+    Description = "Download CWT release or recovery data from RMIS ftp text files.",
     `Authors@R` = c(person("Ben", "Cox", email = "benjamin.cox@dfw.wa.gov", role = c("aut", "cre"))),
-    `Imports`="lubridate",
-    `@importFrom`="magrittr %>%, RCurl getURL",
-    `Depends`="tidyverse, foreach, parallel, doParallel"
+    `Imports`="lubridate, RCurl",
+    `@importFrom`="magrittr %>%",
+   # `@importFrom`="RCurl getURL",
+    `Depends`="tidyverse, doParallel, foreach, parallel"
   ),
   overwrite=TRUE
 )
 # Define License with use_*_license()
 usethis::use_mit_license("Ben Cox")
+usethis::use_package("tidyverse",type="Depends")
+usethis::use_package("doParallel",type="Depends")
+usethis::use_package("foreach",type="Depends")
+usethis::use_package("parallel",type="Depends")
+usethis::use_package("lubridate",type="Imports")
 ```
 
 ```{r function-1}
@@ -45,7 +51,7 @@ usethis::use_mit_license("Ben Cox")
 #'
 #' @examples download_releases()
 download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
-  if(is.null(dir)) dir <- getwd()
+  if(is.null(dir)) dir <- "Data"
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)
@@ -106,7 +112,7 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
 #' @param endYear  Last year of desired CWT recovery data
 #' @param RMIS_url URL to RMIS ftp server
 #' @param temp_dir File to hold downloaded csv's
-#'
+#' @importFrom RCurl getURL
 #' @return A list with download urls for each file and destination paths for each file
 #' @export
 #' @examples
@@ -143,7 +149,7 @@ ftp_names <- RCurl::getURL(RMIS_url, dirlistonly = TRUE)
   files <- csvs[which(yrs >= startYear & yrs<=endYear)] %>% substr(1, nchar(.)-1)
 
 # Return the list with a vector of file urls and the local path to save the downloaded files
-  list(download_urls=paste0(RMIS_url, files), local_paths=paste0(dir, files))
+  list(download_urls=paste0(RMIS_url, files), files=file.path(dir,files))
 }
 
 ```
@@ -163,7 +169,7 @@ ftp_names <- RCurl::getURL(RMIS_url, dirlistonly = TRUE)
 #' @examples
 download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
 
-  if(is.null(dir)) dir <- "Data/Recoveries/temp/"
+  if(is.null(dir)) dir <- "Data/Recoveries"
   if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
 
 
@@ -199,7 +205,7 @@ message("This will take a while.")
      foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
 
       # Download the files from download urls, save them to the local paths
-       download.file(url=file_list$download_urls[i], destfile=file_list$local_paths[i], quiet=TRUE)
+       download.file(url=file_list$download_urls[i], destfile=file_list$files[i], quiet=TRUE)
        
     }
     
@@ -207,7 +213,234 @@ stopCluster(cl)
 
 }
 
+```
 
+
+```{r function-5}
+#' Read release data
+#'
+#' @param first_by first brood year of data
+#' @param last_by  last brood year of data
+#' @param dir Directory where release data were downloaded
+
+#' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
+#' @export
+#'@importFrom readr read_csv cols
+#' @examples
+read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
+  
+  file <- file.path(dir, "RL041_ALL_FULLSET.zip")
+  if(!file.exists(file)){stop("Release data not found")}
+  
+ if (!is.null(first_by) & !is.null(last_by)) {  
+  readr::read_csv(file, 
+           col_types=readr::cols(.default="c",
+                          species="i",
+                          run="i",
+                          avg_weight="d",
+                          cwt_1st_mark_count="d",
+                          cwt_2nd_mark_count="d",
+                          non_cwt_1st_mark_count="d",
+                          non_cwt_2nd_mark_count="d",
+                          brood_year="i",
+                          tag_loss_rate="d",
+                          avg_length="d",
+                          tag_loss_sample_size="i",
+                          tag_loss_days="d"), 
+           progress=FALSE)%>% 
+    # Filter for Chinook (1) and Coho (2)
+    filter( brood_year >= first_by, 
+            brood_year <= last_by)
+ } else {
+   readr::read_csv(file, 
+           col_types=readr::cols(.default="c",
+                          species="i",
+                          run="i",
+                          avg_weight="d",
+                          cwt_1st_mark_count="d",
+                          cwt_2nd_mark_count="d",
+                          non_cwt_1st_mark_count="d",
+                          non_cwt_2nd_mark_count="d",
+                          brood_year="i",
+                          tag_loss_rate="d",
+                          avg_length="d",
+                          tag_loss_sample_size="i",
+                          tag_loss_days="d"), 
+           progress=FALSE)
+  
+ }
+}  
+
+
+```
+
+
+```{r function-6}
+#' Lookup foreign keys in RMIS release data
+#'
+#' @param RMIS_releases 
+#'
+#' @return Dataframe of RMIS release data with decoded field names.
+#' @export
+#'
+#' @examples
+decode_release_data <- function(RMIS_releases){
+  #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
+ # Read lookup tables
+  RMIS_locations <- read_csv("RMIS_LUTs/LC041_ALL_FULLSET.zip", col_types=cols(.default="c"),progress=FALSE)
+  RMIS_runs <- read_csv("RMIS_LUTs/run.zip", col_types=cols(.default="c",run="i"),progress=FALSE)
+  RMIS_species <- read_csv("RMIS_LUTs/species.zip", col_types=cols(.default="c",species="i"),progress=FALSE)
+  RMIS_studytype <- read_csv("RMIS_LUTs/study_type.zip", col_types=cols(.default="c"),progress=FALSE)
+  
+  # THIS IS NOT ON THE FTP SERVER, HAVE TO KEEP IN PROJECT FILE
+  #RMIS_domain <- read_tsv("rmis_region_LUT.txt", col_types=cols(.default="c"),progress=FALSE)
+
+
+  missing_release_locs <- which(is.na(RMIS_releases$release_location_code) | 
+                                  RMIS_releases$release_location_code=="" | 
+                                  grepl("TEMP",RMIS_releases$release_location_code))
+
+  missing_domains <- RMIS_releases %>% 
+    dplyr::filter(grepl("TEMP", .$release_location_code) | is.na(release_location_code) | release_location_code == "") %>% 
+  left_join(filter(RMIS_locations, location_type == 3), by=c("hatchery_location_code"="location_code")) %>% 
+  select(tag_code_or_release_id, psc_region) %>% 
+  left_join(RMIS_domain, by=c("psc_region"="rmis_region")) %>% 
+    select(rmis_domain)
+
+CR_rel_data <- 
+
+  # Filter the releases for brood years, grab all years for both release summary and tag recoveries  
+  RMIS_releases %>% 
+  # Then join to the location table (type 4 = release locations) to lookup the release site name and psc region
+    left_join(
+    
+    #Select just the location code and name from the locations table to join to the releases
+      select(filter(RMIS_locations,location_type==4), location_code, release_site=name, psc_region),
+  
+    #Join the release data to the filtered location table (line above) by release location code and RelCode (named in line above: "RelCode=location_code")
+      by=c("release_location_code"="location_code")) %>% 
+  
+    # Join the psc region looked up above to the rmis_domain table to lookup the RMIS domain,
+      left_join(RMIS_domain, by=c("psc_region"="rmis_region")) %>%
+  
+    # Join to the location table again, this time lookup hatchery name
+      left_join(
+      select(filter(RMIS_locations, location_type==3), location_code, hatchery=name),
+      by=c("hatchery_location_code"="location_code")) %>%
+    
+    # Join to location table one last time to lookup stock name
+      left_join(
+      select(filter(RMIS_locations, location_type==5), location_code, stock=name),
+      by=c("stock_location_code"="location_code")) %>%   
+  
+    left_join(select(RMIS_species, species, species_name), by=c("species")) %>% 
+    left_join(RMIS_runs, by="run") %>% 
+    left_join(RMIS_studytype, by="study_type") %>% 
+  
+    mutate(release_year=substr(last_release_date, 1, 4)) #%>%
+  
+    # Finally, select only the columns needed.
+    #select(record_code,tag_code_or_release_id,reporting_agency, species=species_name, run=run_name, tag_code_or_release_id, Hatchery, Stock, RelSite,brood_year,first_release_date, last_release_date,release_year,rmis_domain,
+    #       cwt_1st_mark, cwt_1st_mark_count,non_cwt_1st_mark,non_cwt_1st_mark_count,cwt_2nd_mark,
+    #       cwt_2nd_mark_count,non_cwt_2nd_mark,non_cwt_2nd_mark_count,release_location_code,study_type=study_type_name,avg_weight,rel_id,comp_key)
+
+# Lookup the rmis domain for the missing domains, replace in CR_rel_data
+CR_rel_data[which(is.na(CR_rel_data$rmis_domain)), "rmis_domain"] <- 
+  
+  CR_rel_data[which(is.na(CR_rel_data$rmis_domain)),] %>% 
+  left_join(filter(RMIS_locations,location_type==3), by=c("hatchery_location_code"="location_code")) %>%
+  left_join(RMIS_domain, by=c("psc_region.y"="rmis_region")) %>% 
+  select(rmis_domain.y)
+
+# Check for agencies with releases having undefined domains
+agencies_no_domain <- CR_rel_data %>% 
+  filter(is.na(rmis_domain)) %>% 
+  select(release_agency) %>% 
+  distinct()
+
+# # Print warning for missing rmis_domains. Col R are usually reported, have seen WDFW coastal data with no domain
+# if(nrow(agencies_no_domain)>0){
+#   warning(paste(nrow(agencies_no_domain),"agencies have undefined release domains."), 
+#           paste(c(" Agencies include:", pull(agencies_no_domain, release_agency)), collapse=" "))
+# }
+
+# Change release date to date format
+ CR_rel_data %>% 
+mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
+
+ }
+```
+
+
+```{r function-7}
+#' Filter and combine recoveries
+#'
+#' @param first_by 
+#' @param last_by 
+#' @param ... filter conditions for RMIS fields 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+filter_and_combine_recoveries <- function(first_by, last_by, ...){
+  # Create quosure for filter conditions passed in: need to document examples. 
+  # Can pass in any filter conditions using RMIS field names.
+  filter_conditions <- rlang::quos(...)
+
+  files <- list.files("GatherData/temp_csvs", full.names=TRUE)
+
+  Releases <- read_releases() %>% decode_release_data()
+  
+  species_lu <- read_csv("RMIS_LUTs/species.zip", 
+                         col_types=cols(species=col_integer(), 
+                                        species_name=col_character(),
+                                        species_name=col_character())) %>% 
+    select(species,species_name)
+                                                                 
+  # Set up clusters for parallel read/filter/combine
+      cl <- makeCluster(detectCores())
+      
+  # Register cluster      
+      registerDoParallel(cl=cl)  
+      
+# Read, lookup release info, filter in parallel
+df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("tidyverse")) %dopar% {
+
+    read_csv(files[i], col_types=cols(.default="c", 
+                                      recovery_date=col_date(format="%Y%m%d"),
+                                      run_year=col_integer(),
+                                      species=col_integer(),
+                                      estimated_number=col_double())) %>%
+    # Look up recovery species
+    left_join(species_lu, by="species") %>% 
+    # Look up release info
+    left_join(Releases, by=c("tag_code"="tag_code_or_release_id"), suffix=c("_recovery","_release")) %>%
+    
+    # Filter by conditions passed in as '...'
+    filter(!!!filter_conditions, 
+           # Type 5 recoveries can lead to double counting, check RMIS manual
+           sample_type!=5, 
+           # Only succesfully decoded recoveries
+           tag_status==1,
+           run_year>=first_by+2,
+           run_year<=last_by+7)
+  
+  } # End parallel for loop
+
+    # Stop the parallel cluster
+        stopCluster(cl)
+  
+#  Return df      
+  df
+      
+    # Write out the combined dataframe as a csv
+    #write.csv(df, paste0("GatherData/", "recoveries.csv"),row.names=FALSE)
+    
+    # Delete the downloaded csvs in the temp directory
+      #file.remove(file_list$local_paths) %>% invisible()
+  
+}
 
 ```
 

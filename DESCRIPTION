@@ -1,26 +1,17 @@
 Package: rRMIS
-Title: Download CWT release or recovery data from RMIS
+Title: rRMIS
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Ben",
            family = "Cox",
            role = c("aut", "cre"),
            email = "benjamin.cox@dfw.wa.gov")
-Description: Use Rmd First method to build your package. Start
-    your package with documentation. Everything can be set from a Rmd file
-    in your project.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
-Imports: 
-    lubridate,
-    magrittr,
-    RCurl
-Suggests: 
-    knitr,
-    rmarkdown
+Description: Download CWT release or recovery data from RMIS ftp
+    text files.
+License: MIT + file LICENSE
 VignetteBuilder: 
     knitr
-@importFrom: magrittr %>%, RCurl getURL
+@importFrom: magrittr %>%
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

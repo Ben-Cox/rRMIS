@@ -39,3 +39,5 @@ vignettes
 .Renviron
 inst/doc
 *.Rproj
+
+rmis_region_LUT.txt
