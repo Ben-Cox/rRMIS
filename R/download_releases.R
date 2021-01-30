@@ -11,6 +11,7 @@
 #' @examples download_releases()
 download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
   if(is.null(dir)) dir <- "Data"
+  if(!dir.exists(dir)) dir.create(dir)
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)
