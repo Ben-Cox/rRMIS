@@ -1,31 +1,16 @@
 Package: rRMIS
-Title: rRMIS
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "Ben",
-           family = "Cox",
-           role = c("aut", "cre"),
-           email = "benjamin.cox@dfw.wa.gov")
-Description: Download CWT release or recovery data from RMIS ftp
-    text files.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
-Depends: 
-    R (>= 2.10)
-Imports: 
-    dplyr,
-    lubridate,
-    magrittr,
-    RCurl,
-    readr,
-    rlang
-Suggests: 
-    knitr,
-    rmarkdown
-VignetteBuilder: 
-    knitr
-@importFrom: magrittr %>%
+Title: rRMIS
+Description: Download CWT release or recovery data from RMIS ftp text files.
+Authors@R: person(given = "Ben",
+       family = "Cox",
+       role = c("aut", "cre"),
+       email = "benjamin.cox@dfw.wa.gov")
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: lubridate, RCurl
+@importFrom: magrittr %>%
+Depends: tidyverse, doParallel, foreach, parallel
