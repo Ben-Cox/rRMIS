@@ -12,7 +12,7 @@ download_releases(
 \arguments{
 \item{url}{the url to the full CWT release data set on the RMIS ftp server}
 
-\item{dir}{Directory to save downloaded file. If \code{NULL} (the default), saves to working directory.}
+\item{dir}{Directory to save downloaded file. If \code{NULL} (the default), saves in Data in working directory.}
 }
 \value{
 \code{NULL}

@@ -3,7 +3,8 @@
 #' @param first_by 
 #' @param last_by 
 #' @param ... filter conditions for RMIS fields 
-#'
+#' @importFrom rlang quos
+#' @importFrom rlang !!!
 #' @return
 #' @export
 #'
@@ -12,7 +13,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, ...){
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
 
-  files <- list.files("GatherData/temp_csvs", full.names=TRUE)
+  files <- list.files("Data/Recoveries", full.names=TRUE)
 
   Releases <- read_releases() %>% decode_release_data()
   
