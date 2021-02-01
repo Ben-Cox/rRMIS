@@ -15,7 +15,7 @@ This will fill the description of your package.
 Add this chunk using `fusen::description_chunk()`
 --> 
 
-```{r description}
+```{r description,eval=FALSE}
 # Describe your package
 fusen::fill_description(
   fields = list(
@@ -217,7 +217,6 @@ stopCluster(cl)
 
 ```
 
-
 ```{r function-5}
 #' Read release data
 #'
@@ -275,7 +274,6 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
 
 
 ```
-
 
 ```{r function-6}
 #' Lookup foreign keys in RMIS release data
@@ -373,7 +371,6 @@ mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
  }
 ```
 
-
 ```{r function-7}
 #' Filter and combine recoveries
 #'
@@ -392,7 +389,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, ...){
   filter_conditions <- rlang::quos(...)
 
   files <- list.files("Data/Recoveries", full.names=TRUE)
-
+if(is.null(files)){stop("No recovery data found")}
   Releases <- read_releases() %>% decode_release_data()
   
   species_lu <- read_csv("RMIS_LUTs/species.zip", 
@@ -570,7 +567,6 @@ tidy_recoveries <- function(recoveries) {
 
 ```
 
-
 # There can be development actions
 
 These will be included in the `dev_history.R` file of your package, but won't be direct part of it.
@@ -579,6 +575,15 @@ These will be included in the `dev_history.R` file of your package, but won't be
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
 fusen::inflate(rmd = "dev/dev_history.Rmd")
+```
+
+```{r development-2, eval=FALSE}
+# Add fishery map lookup to internal data, this table comes from Jim Longwill. Not on RMIS website
+library(readxl)
+fishery_lu <-read_xlsx("RMIS_LUTs/rmis_rar_fishery_map.xlsx", sheet = "rar_original_fishery_map", trim_ws = TRUE, progress = FALSE)
+
+usethis::use_data(fishery_lu)
+
 ```
 
 

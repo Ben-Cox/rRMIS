@@ -14,7 +14,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, ...){
   filter_conditions <- rlang::quos(...)
 
   files <- list.files("Data/Recoveries", full.names=TRUE)
-
+if(is.null(files)){stop("No recovery data found")}
   Releases <- read_releases() %>% decode_release_data()
   
   species_lu <- read_csv("RMIS_LUTs/species.zip", 
