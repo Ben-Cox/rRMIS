@@ -9,12 +9,13 @@
 #' @export
 #'
 filter_and_combine_recoveries <- function(first_by, last_by, ...){
+  if(!dir.exists("Data/Recoveries") || length(list.files("Data/Recoveries"))==0){stop("No recovery data found")}
   # Create quosure for filter conditions passed in: need to document examples. 
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
 
   files <- list.files("Data/Recoveries", full.names=TRUE)
-if(is.null(files)){stop("No recovery data found")}
+
   Releases <- read_releases() %>% decode_release_data()
   
   species_lu <- read_csv("RMIS_LUTs/species.zip", 
