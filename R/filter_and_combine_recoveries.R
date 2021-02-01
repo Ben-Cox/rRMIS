@@ -49,6 +49,8 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
            sample_type!=5, 
            # Only succesfully decoded recoveries
            tag_status==1,
+           brood_year>=first_by,
+           brood_year<=last_by,
            run_year>=first_by+2,
            run_year<=last_by+7)
   
