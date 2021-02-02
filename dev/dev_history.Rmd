@@ -23,7 +23,7 @@ fusen::fill_description(
     Description = "Download CWT release or recovery data from RMIS ftp text files.",
     `Authors@R` = c(person("Ben", "Cox", email = "benjamin.cox@dfw.wa.gov", role = c("aut", "cre"))),
     `Imports`="lubridate, RCurl",
-    `@importFrom`="magrittr %>%",
+    #`@importFrom`="magrittr %>%",
    # `@importFrom`="RCurl getURL",
     `Depends`="tidyverse, doParallel, foreach, parallel"
   ),
@@ -525,23 +525,6 @@ tidy_recoveries <- function(recoveries) {
 }
 
 ```
-
-```{r function-9}
-#' zzz
-#'
-#' @param libname 
-#' @param pkgname 
-#'
-#' @return
-#'
-.onLoad <- function(libname,pkgname){
-  download_releases()
-  download_luts()
-  message("Downloading release data and LUTs from RMIS")
-}
-
-```
-
 
 # There can be development actions
 
