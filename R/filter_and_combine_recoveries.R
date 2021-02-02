@@ -41,7 +41,7 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
     # Look up recovery species
     left_join(species_lu, by="species") %>% 
     # Look up release info
-    left_join(Releases, by=c("tag_code"="tag_code_or_release_id"), suffix=c("_recovery","_release")) %>%
+    left_join(Releases, by=c("tag_code"="tag_code_or_release_id"), suffix=c("_recovery","")) %>%
     
     # Filter by conditions passed in as '...'
     filter(!!!filter_conditions, 
