@@ -534,7 +534,7 @@ tidy_recoveries <- function(recoveries) {
 #'
 #' @return
 #'
-.onLoad <- function(libname=find.package("rRMIS"), pkgname="rRMIS"){
+.onLoad <- function(libname,pkgname){
   download_releases()
   download_luts()
   message("Downloading release data and LUTs from RMIS")
