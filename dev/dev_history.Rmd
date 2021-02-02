@@ -526,6 +526,23 @@ tidy_recoveries <- function(recoveries) {
 
 ```
 
+```{r function-9}
+#' zzz
+#'
+#' @param libname 
+#' @param pkgname 
+#'
+#' @return
+#'
+.onLoad <- function(libname=find.package("rRMIS"), pkgname="rRMIS"){
+  download_releases()
+  download_luts()
+  message("Downloading release data and LUTs from RMIS")
+}
+
+```
+
+
 # There can be development actions
 
 These will be included in the `dev_history.R` file of your package, but won't be direct part of it.
