@@ -10,7 +10,7 @@
 read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
   
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
-  if(!file.exists(file)){stop("Release data not found")}
+  if(!file.exists(file)){download_releases(dir=dir)}
   
  if (!is.null(first_by) & !is.null(last_by)) {  
   readr::read_csv(file, 
