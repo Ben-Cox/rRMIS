@@ -3,18 +3,17 @@
 #' @param first_by first brood year of data
 #' @param last_by  last brood year of data
 #' @param dir Directory where release data were downloaded
-
+#' @import readr
 #' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
 #' @export
-#'@importFrom readr read_csv cols
 read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
-  
+  require(readr)
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
   if(!file.exists(file)){download_releases(dir=dir)}
   
  if (!is.null(first_by) & !is.null(last_by)) {  
-  readr::read_csv(file, 
-           col_types=readr::cols(.default="c",
+  read_csv(file, 
+           col_types=cols(.default="c",
                           species="i",
                           run="i",
                           avg_weight="d",
@@ -32,8 +31,8 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
     filter( brood_year >= first_by, 
             brood_year <= last_by)
  } else {
-   readr::read_csv(file, 
-           col_types=readr::cols(.default="c",
+   read_csv(file, 
+           col_types=cols(.default="c",
                           species="i",
                           run="i",
                           avg_weight="d",

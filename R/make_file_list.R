@@ -13,7 +13,7 @@ make_file_list <- function(startYear,
                               dir=NULL) {
 # # Error message
 #   if(is.null(startYear) | is.null(endYear)) {
-# 
+
 #     return(message("ERROR: Please supply start and/or end year"))
 #   }
   

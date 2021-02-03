@@ -1,7 +1,6 @@
 #' Lookup foreign keys in RMIS release data
 #'
 #' @param RMIS_releases 
-#'
 #' @return Dataframe of RMIS release data with decoded field names.
 #' @export
 #'

@@ -6,11 +6,14 @@
 #' @return Downloads lookup tables from RMIS into chosen dir
 #' @export
 download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
-  
-  if(is.null(dir)) {dir <- "RMIS_LUTs/"}
+  #require(parallel)
+  #require(doParallel)
+  #require(foreach)
+
+  if(is.null(dir)) {dir <- "RMIS_LUTs"}
   
     if(!dir.exists(dir)) {
-      dir.create(dir) }
+      dir.create(dir,recursive=TRUE) }
 
   lut_dir <- dir
   
@@ -29,11 +32,12 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
     ftp_paths <- paste0(url, lut_filenames)
     dest_paths <- paste0(dir, lut_filenames)                 
     
-       cl <- makeCluster(detectCores())
-  
-     registerDoParallel(cl=cl)
+       cl <- parallel::makeCluster(parallel::detectCores())
+      
+       doParallel::registerDoParallel(cl=cl)
+     
 
-  foreach(i=seq_along(ftp_paths)) %dopar% {
+  foreach::foreach(i=seq_along(ftp_paths)) %dopar% {
     download.file(url=ftp_paths[i], destfile=dest_paths[i], quiet=TRUE)
     } %>% 
       invisible()

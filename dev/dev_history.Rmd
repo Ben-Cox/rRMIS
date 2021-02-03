@@ -15,6 +15,7 @@ This will fill the description of your package.
 Add this chunk using `fusen::description_chunk()`
 --> 
 
+
 ```{r description,eval=FALSE}
 # Describe your package
 fusen::fill_description(
@@ -25,7 +26,7 @@ fusen::fill_description(
     `Imports`="lubridate, RCurl",
     #`@importFrom`="magrittr %>%",
    # `@importFrom`="RCurl getURL",
-    `Depends`="tidyverse, doParallel, foreach, parallel"
+    `Depends`="dplyr, readr, doParallel, foreach, parallel"
   ),
   overwrite=TRUE
 )
@@ -52,8 +53,8 @@ fusen::fill_description(
 #' @examples download_releases()
 download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
   if(is.null(dir)) dir <- "Data"
-  if(!dir.exists(dir)) dir.create(dir)
-  
+  if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
+  message("Downloading Release data from RMIS")
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)
@@ -71,11 +72,14 @@ download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET
 #' @export
 #' @examples
 download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
-  
-  if(is.null(dir)) {dir <- "RMIS_LUTs/"}
+  #require(parallel)
+  #require(doParallel)
+  #require(foreach)
+
+  if(is.null(dir)) {dir <- "RMIS_LUTs"}
   
     if(!dir.exists(dir)) {
-      dir.create(dir) }
+      dir.create(dir,recursive=TRUE) }
 
   lut_dir <- dir
   
@@ -94,11 +98,12 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
     ftp_paths <- paste0(url, lut_filenames)
     dest_paths <- paste0(dir, lut_filenames)                 
     
-       cl <- makeCluster(detectCores())
-  
-     registerDoParallel(cl=cl)
+       cl <- parallel::makeCluster(parallel::detectCores())
+      
+       doParallel::registerDoParallel(cl=cl)
+     
 
-  foreach(i=seq_along(ftp_paths)) %dopar% {
+  foreach::foreach(i=seq_along(ftp_paths)) %dopar% {
     download.file(url=ftp_paths[i], destfile=dest_paths[i], quiet=TRUE)
     } %>% 
       invisible()
@@ -124,7 +129,7 @@ make_file_list <- function(startYear,
                               dir=NULL) {
 # # Error message
 #   if(is.null(startYear) | is.null(endYear)) {
-# 
+
 #     return(message("ERROR: Please supply start and/or end year"))
 #   }
   
@@ -223,19 +228,18 @@ stopCluster(cl)
 #' @param first_by first brood year of data
 #' @param last_by  last brood year of data
 #' @param dir Directory where release data were downloaded
-
+#' @import readr
 #' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
 #' @export
-#'@importFrom readr read_csv cols
 #' @examples
 read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
-  
+  require(readr)
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
   if(!file.exists(file)){download_releases(dir=dir)}
   
  if (!is.null(first_by) & !is.null(last_by)) {  
-  readr::read_csv(file, 
-           col_types=readr::cols(.default="c",
+  read_csv(file, 
+           col_types=cols(.default="c",
                           species="i",
                           run="i",
                           avg_weight="d",
@@ -253,8 +257,8 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
     filter( brood_year >= first_by, 
             brood_year <= last_by)
  } else {
-   readr::read_csv(file, 
-           col_types=readr::cols(.default="c",
+   read_csv(file, 
+           col_types=cols(.default="c",
                           species="i",
                           run="i",
                           avg_weight="d",
@@ -279,7 +283,6 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
 #' Lookup foreign keys in RMIS release data
 #'
 #' @param RMIS_releases 
-#'
 #' @return Dataframe of RMIS release data with decoded field names.
 #' @export
 #'
@@ -539,9 +542,12 @@ tidy_recoveries <- function(recoveries) {
 #'
 #' @examples
 get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
-  download_releases(dir=dir)
+  if(is.null(dir))dir <- "Data"
+  if(!file.exists(file.path(dir,"RL041_ALL_FULLSET.zip"))) download_releases(dir=dir)
+  
   read_releases(first_by=first_by, 
-                last_by=last_by,dir) %>% 
+                last_by=last_by,
+                dir) %>% 
     decode_release_data()
 }
   
