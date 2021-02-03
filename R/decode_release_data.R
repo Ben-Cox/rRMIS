@@ -7,6 +7,8 @@
 #'
 decode_release_data <- function(RMIS_releases){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
+  if(!dir.exists("RMIS_LUTs") | length(list.files("RMIS_LUTs"))==0){download_luts()}
+  
  # Read lookup tables
   RMIS_locations <- read_csv("RMIS_LUTs/LC041_ALL_FULLSET.zip", col_types=cols(.default="c"),progress=FALSE)
   RMIS_runs <- read_csv("RMIS_LUTs/run.zip", col_types=cols(.default="c",run="i"),progress=FALSE)
