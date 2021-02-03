@@ -231,7 +231,7 @@ stopCluster(cl)
 read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
   
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
-  if(!file.exists(file)){stop("Release data not found")}
+  if(!file.exists(file)){download_releases(dir=dir)}
   
  if (!is.null(first_by) & !is.null(last_by)) {  
   readr::read_csv(file, 
@@ -286,16 +286,17 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
 #' @examples
 decode_release_data <- function(RMIS_releases){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
+  if(!dir.exists("RMIS_LUTs") | length(list.files("RMIS_LUTs"))==0){
+    message("Downloading LUTs from RMIS.")
+    download_luts()
+    }
+  
  # Read lookup tables
   RMIS_locations <- read_csv("RMIS_LUTs/LC041_ALL_FULLSET.zip", col_types=cols(.default="c"),progress=FALSE)
   RMIS_runs <- read_csv("RMIS_LUTs/run.zip", col_types=cols(.default="c",run="i"),progress=FALSE)
   RMIS_species <- read_csv("RMIS_LUTs/species.zip", col_types=cols(.default="c",species="i"),progress=FALSE)
   RMIS_studytype <- read_csv("RMIS_LUTs/study_type.zip", col_types=cols(.default="c"),progress=FALSE)
   
-  # THIS IS NOT ON THE FTP SERVER, HAVE TO KEEP IN PROJECT FILE
-  #RMIS_domain <- read_tsv("rmis_region_LUT.txt", col_types=cols(.default="c"),progress=FALSE)
-
-
   missing_release_locs <- which(is.na(RMIS_releases$release_location_code) | 
                                   RMIS_releases$release_location_code=="" | 
                                   grepl("TEMP",RMIS_releases$release_location_code))
@@ -525,6 +526,27 @@ tidy_recoveries <- function(recoveries) {
 }
 
 ```
+
+```{r function-9}
+#' Download dataframe of the RMIS release data
+#'
+#' @param first_by first brood year of releases 
+#' @param last_by  last brood year of releases
+#' @param dir directory where releases are held if `NULL` (the default) creates a Data folder in working directory.
+#'
+#' @return A dataframe of the RMIS release data with foreign keys decoded.
+#' @export
+#'
+#' @examples
+get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
+  download_releases(dir=dir)
+  read_releases(first_by=first_by, 
+                last_by=last_by,dir) %>% 
+    decode_release_data()
+}
+  
+```
+
 
 # There can be development actions
 

@@ -7,7 +7,10 @@
 #'
 decode_release_data <- function(RMIS_releases){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
-  if(!dir.exists("RMIS_LUTs") | length(list.files("RMIS_LUTs"))==0){download_luts()}
+  if(!dir.exists("RMIS_LUTs") | length(list.files("RMIS_LUTs"))==0){
+    message("Downloading LUTs from RMIS.")
+    download_luts()
+    }
   
  # Read lookup tables
   RMIS_locations <- read_csv("RMIS_LUTs/LC041_ALL_FULLSET.zip", col_types=cols(.default="c"),progress=FALSE)
@@ -15,10 +18,6 @@ decode_release_data <- function(RMIS_releases){
   RMIS_species <- read_csv("RMIS_LUTs/species.zip", col_types=cols(.default="c",species="i"),progress=FALSE)
   RMIS_studytype <- read_csv("RMIS_LUTs/study_type.zip", col_types=cols(.default="c"),progress=FALSE)
   
-  # THIS IS NOT ON THE FTP SERVER, HAVE TO KEEP IN PROJECT FILE
-  #RMIS_domain <- read_tsv("rmis_region_LUT.txt", col_types=cols(.default="c"),progress=FALSE)
-
-
   missing_release_locs <- which(is.na(RMIS_releases$release_location_code) | 
                                   RMIS_releases$release_location_code=="" | 
                                   grepl("TEMP",RMIS_releases$release_location_code))
