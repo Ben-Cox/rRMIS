@@ -8,6 +8,7 @@
 #' @export
 #'
 get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
+  if(is.null(dir))dir <- "Data"
   download_releases(dir=dir)
   read_releases(first_by=first_by, 
                 last_by=last_by,dir) %>% 
