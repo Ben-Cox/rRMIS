@@ -9,9 +9,11 @@
 #'
 get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
   if(is.null(dir))dir <- "Data"
-  download_releases(dir=dir)
+  if(!file.exists(file.path(dir,"RL041_ALL_FULLSET.zip"))) download_releases(dir=dir)
+  
   read_releases(first_by=first_by, 
-                last_by=last_by,dir) %>% 
+                last_by=last_by,
+                dir) %>% 
     decode_release_data()
 }
   
