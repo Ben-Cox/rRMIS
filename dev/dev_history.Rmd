@@ -76,7 +76,7 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
   #require(doParallel)
   #require(foreach)
 
-  if(is.null(dir)) {dir <- "RMIS_LUTs"}
+  if(is.null(dir)) {dir <- "RMIS_LUTs/"}
   
     if(!dir.exists(dir)) {
       dir.create(dir,recursive=TRUE) }
