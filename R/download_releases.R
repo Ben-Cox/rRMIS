@@ -9,8 +9,9 @@
 #' @export
 #'
 #' @examples download_releases()
-download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir="RMIS"){
+download_releases <- function(file="RL041_ALL_FULLSET.zip", dir="RMIS"){
   #if(is.null(dir)) dir <- "RMIS"
+  dir <- file.path(url, file)
   if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
   message("Downloading Release data from RMIS to ~./", dir,".")
   download.file(url=url, 
