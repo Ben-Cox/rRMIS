@@ -1,18 +1,17 @@
 #' Download RMIS LUTs
 #' @description Downloads lookup tables from RMIS ftp server.
 #' @param url url to RMIS ftp serer 
-#' @param dir Directory to save RMIS lookup tables. If `NULL` (the default) puts luts in a RMIS_LUTs folder in working directory.
-#' @return NULL
+#' @param lut_dir Directory to save RMIS lookup tables. If `NULL` (the default) puts luts in a RMIS_LUTs folder in working directory.
+#' @return `NULL`
 #' @return Downloads lookup tables from RMIS into chosen dir
 #' @export
-download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
+download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",lut_dir="RMIS/LUTs"){
   #require(parallel)
   #require(doParallel)
   #require(foreach)
 
-  if(is.null(dir)) {dir <- "RMIS/LUTs"}
-    if(!dir.exists(dir)) {
-      dir.create(dir,recursive=TRUE) }
+ # if(is.null(dir)) {dir <- "RMIS/LUTs"}
+    if(!dir.exists(dir)) {dir.create(dir,recursive=TRUE) }
 
   lut_dir <- dir
   

@@ -9,12 +9,20 @@
 #' @export
 #'
 #' @examples download_releases()
-download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
-  if(is.null(dir)) dir <- "RMIS"
+download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir="RMIS"){
+  #if(is.null(dir)) dir <- "RMIS"
   if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
   message("Downloading Release data from RMIS to ~./", dir,".")
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)
 }
+
+RMIS.globals <- new.env()
+RMIS.globals$url <- "ftp://ftp.rmpc.org/pub/data"
+RMIS.globals$rel_file <- "RL041_ALL_FULLSET.zip"
+
+# modify_url <- function(url){
+#   assign("url", url, RMIS.globals)
+# }
 
