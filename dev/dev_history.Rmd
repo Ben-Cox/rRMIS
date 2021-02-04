@@ -395,11 +395,11 @@ filter_and_combine_recoveries <- function(first_by, last_by, ...){
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
 
-  files <- list.files("Data/Recoveries", full.names=TRUE)
+  files <- list.files("RMIS/Recoveries", full.names=TRUE)
 
   Releases <- read_releases() %>% decode_release_data()
   
-  species_lu <- read_csv("RMIS_LUTs/species.zip", 
+  species_lu <- read_csv("RMIS/LUTs/species.zip", 
                          col_types=cols(species=col_integer(), 
                                         species_name=col_character(),
                                         species_name=col_character())) %>% 
