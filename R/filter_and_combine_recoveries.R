@@ -17,7 +17,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, rec_dir="RMIS/Recov
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
 
-  files <- list.files(lut_dir, full.names=TRUE)
+  files <- list.files(rec_dir, full.names=TRUE)
 
   Releases <- read_releases() %>% decode_release_data()
   
@@ -25,7 +25,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, rec_dir="RMIS/Recov
                          col_types=cols(species=col_integer(), 
                                         species_name=col_character(),
                                         species_name=col_character())) %>% 
-    select(species,species_name)
+                select(species,species_name)
                                                                  
   # Set up clusters for parallel read/filter/combine
       cl <- makeCluster(detectCores())
