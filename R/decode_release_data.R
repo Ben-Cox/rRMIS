@@ -9,7 +9,7 @@ decode_release_data <- function(RMIS_releases,lut_dir=NULL){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
   if(is.null(lut_dir)){lut_dir <- "Data/RMIS_LUTs"}
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
-    message("Downloading LUTs from RMIS.")
+    message("Downloading LUTs from RMIS into",lut_dir,".")
     download_luts(dir=lut_dir)
     }
   
