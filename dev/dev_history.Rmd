@@ -394,7 +394,7 @@ mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
 #' @export
 #'
 #' @examples
-filter_and_combine_recoveries <- function(first_by, last_by, rec_dir="RMIS/Recoveries", lut_dir="RMIS/LUTs", ...){
+filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir="RMIS/Recoveries", lut_dir="RMIS/LUTs" ){
   
   if(!dir.exists(rec_dir) || length(list.files(rec_dir))==0){stop("No recovery data found")}
   

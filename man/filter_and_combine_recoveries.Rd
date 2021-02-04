@@ -7,9 +7,9 @@
 filter_and_combine_recoveries(
   first_by,
   last_by,
+  ...,
   rec_dir = "RMIS/Recoveries",
-  lut_dir = "RMIS/LUTs",
-  ...
+  lut_dir = "RMIS/LUTs"
 )
 }
 \arguments{
@@ -17,9 +17,9 @@ filter_and_combine_recoveries(
 
 \item{last_by}{}
 
-\item{rec_dir}{Directory where recovery data were downloaded}
-
 \item{...}{filter conditions for RMIS fields}
+
+\item{rec_dir}{Directory where recovery data were downloaded}
 }
 \value{
 
