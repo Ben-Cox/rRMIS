@@ -10,8 +10,7 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
   #require(doParallel)
   #require(foreach)
 
-  if(is.null(dir)) {dir <- "RMIS_LUTs/"}
-  
+  if(is.null(dir)) {dir <- "Data/RMIS_LUTs"}
     if(!dir.exists(dir)) {
       dir.create(dir,recursive=TRUE) }
 
@@ -29,9 +28,9 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
                     "adclip_selective_fishery.csv"
                     )
 
-    ftp_paths <- paste0(url, lut_filenames)
-    dest_paths <- paste0(dir, lut_filenames)                 
-    
+    ftp_paths <- file.path(url, lut_filenames)
+    dest_paths <- file.path(dir, lut_filenames)                
+   
        cl <- parallel::makeCluster(parallel::detectCores())
       
        doParallel::registerDoParallel(cl=cl)

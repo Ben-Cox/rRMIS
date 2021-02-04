@@ -6,8 +6,9 @@
 #' @import readr
 #' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
 #' @export
-read_releases <- function(first_by=NULL, last_by=NULL, dir="Data"){
+read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
   require(readr)
+  if(is.null(dir)){dir <- "Data"}
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
   if(!file.exists(file)){download_releases(dir=dir)}
   

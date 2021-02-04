@@ -1,21 +1,23 @@
 #' Lookup foreign keys in RMIS release data
 #'
-#' @param RMIS_releases 
+#' @param RMIS_releases read in from read_releases()
+#' @param lut_dir Directory with RMIS lookup tables if `NULL` (default) looks in Data/RMIS_LUTs 
 #' @return Dataframe of RMIS release data with decoded field names.
 #' @export
 #'
-decode_release_data <- function(RMIS_releases){
+decode_release_data <- function(RMIS_releases,lut_dir=NULL){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
-  if(!dir.exists("RMIS_LUTs") | length(list.files("RMIS_LUTs"))==0){
+  if(is.null(lut_dir)){lut_dir <- "Data/RMIS_LUTs"}
+  if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
     message("Downloading LUTs from RMIS.")
-    download_luts()
+    download_luts(dir=lut_dir)
     }
   
  # Read lookup tables
-  RMIS_locations <- read_csv("RMIS_LUTs/LC041_ALL_FULLSET.zip", col_types=cols(.default="c"),progress=FALSE)
-  RMIS_runs <- read_csv("RMIS_LUTs/run.zip", col_types=cols(.default="c",run="i"),progress=FALSE)
-  RMIS_species <- read_csv("RMIS_LUTs/species.zip", col_types=cols(.default="c",species="i"),progress=FALSE)
-  RMIS_studytype <- read_csv("RMIS_LUTs/study_type.zip", col_types=cols(.default="c"),progress=FALSE)
+  RMIS_locations <- read_csv(file.path(lut_dir,"LC041_ALL_FULLSET.zip"), col_types=cols(.default="c"),progress=FALSE)
+  RMIS_runs <- read_csv(file.path(lut_dir,"run.zip"), col_types=cols(.default="c",run="i"),progress=FALSE)
+  RMIS_species <- read_csv(file.path(lut_dir,"species.zip"), col_types=cols(.default="c",species="i"),progress=FALSE)
+  RMIS_studytype <- read_csv(file.path(lut_dir,"study_type.zip"), col_types=cols(.default="c"),progress=FALSE)
   
   missing_release_locs <- which(is.na(RMIS_releases$release_location_code) | 
                                   RMIS_releases$release_location_code=="" | 
