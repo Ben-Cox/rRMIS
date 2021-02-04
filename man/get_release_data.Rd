@@ -4,12 +4,22 @@
 \alias{get_release_data}
 \title{Download dataframe of the RMIS release data}
 \usage{
-get_release_data(first_by = NULL, last_by = NULL, dir = NULL)
+get_release_data(
+  first_by = NULL,
+  last_by = NULL,
+  rel_dir = "RMIS",
+  lut_dir = "RMIS/LUTs",
+  dl_now = FALSE
+)
 }
 \arguments{
 \item{first_by}{first brood year of releases}
 
 \item{last_by}{last brood year of releases}
+
+\item{lut_dir}{directory where releases are held}
+
+\item{dl_now}{Logical determines if release file should be downloaded now (if already present in \code{rel_dir}). Defaults to FALSE.}
 
 \item{dir}{directory where releases are held if \code{NULL} (the default) creates a Data folder in working directory.}
 }
