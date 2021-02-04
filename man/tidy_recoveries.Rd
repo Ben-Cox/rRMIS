@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidy_recoveries.R
 \name{tidy_recoveries}
 \alias{tidy_recoveries}
-\title{tidy up recovery data}
+\title{Lookup recovery location/fishery info}
 \usage{
 tidy_recoveries(recoveries, lut_dir = "RMIS/LUTs")
 }
@@ -13,5 +13,5 @@ tidy_recoveries(recoveries, lut_dir = "RMIS/LUTs")
 A dataframe with foreign keys decoded from LUTs
 }
 \description{
-tidy up recovery data
+Lookup recovery location/fishery info
 }

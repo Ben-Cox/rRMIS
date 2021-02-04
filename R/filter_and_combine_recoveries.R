@@ -3,7 +3,7 @@
 #' @param first_by 
 #' @param last_by 
 #' @param rec_dir Directory where recovery data were downloaded
-#' @param ... filter conditions for RMIS fields 
+#' @param ... filter conditions for RMIS fields in release data 
 #' @importFrom rlang quos
 #' @importFrom rlang !!!
 #' @return
@@ -32,7 +32,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir="RMIS/
       
   # Register cluster      
       registerDoParallel(cl=cl)  
-      
+  message("Reading recovery files, please be patient.")
 # Read, lookup release info, filter in parallel
 df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("tidyverse")) %dopar% {
 
@@ -45,18 +45,18 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
     left_join(species_lu, by="species") %>% 
     # Look up release info
     left_join(Releases, by=c("tag_code"="tag_code_or_release_id"), suffix=c("_recovery","")) %>%
-    
+   
     # Filter by conditions passed in as '...'
-    filter(!!!filter_conditions, 
-           # Type 5 recoveries can lead to double counting, check RMIS manual
+    filter(# Type 5 recoveries can lead to double counting, check RMIS manual
            sample_type!=5, 
            # Only succesfully decoded recoveries
            tag_status==1,
            brood_year>=first_by,
            brood_year<=last_by,
            run_year>=first_by+2,
-           run_year<=last_by+7)
-  
+           run_year<=last_by+7) %>% 
+    tidy_recoveries(lut_dir=lut_dir) %>% 
+    filter(!!!filter_conditions)
   } # End parallel for loop
 
     # Stop the parallel cluster

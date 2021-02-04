@@ -17,7 +17,7 @@ filter_and_combine_recoveries(
 
 \item{last_by}{}
 
-\item{...}{filter conditions for RMIS fields}
+\item{...}{filter conditions for RMIS fields in release data}
 
 \item{rec_dir}{Directory where recovery data were downloaded}
 }

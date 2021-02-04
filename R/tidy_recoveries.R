@@ -1,4 +1,4 @@
-#' tidy up recovery data
+#' Lookup recovery location/fishery info
 #'
 #' @param recoveries A dataframe of recovery data from RMIS
 #'
