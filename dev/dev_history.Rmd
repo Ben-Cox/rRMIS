@@ -54,7 +54,7 @@ fusen::fill_description(
 download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
   if(is.null(dir)) dir <- "Data"
   if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
-  message("Downloading Release data from RMIS to", dir,".")
+  message("Downloading Release data from RMIS into ~./", dir,".")
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)
@@ -292,7 +292,7 @@ decode_release_data <- function(RMIS_releases,lut_dir=NULL){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
   if(is.null(lut_dir)){lut_dir <- "Data/RMIS_LUTs"}
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
-    message("Downloading LUTs from RMIS into",lut_dir,".")
+    message("Downloading LUTs from RMIS into ~./",lut_dir,".")
     download_luts(dir=lut_dir)
     }
   
