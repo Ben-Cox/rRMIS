@@ -47,16 +47,16 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
     left_join(Releases, by=c("tag_code"="tag_code_or_release_id"), suffix=c("_recovery","")) %>%
    
     # Filter by conditions passed in as '...'
-    filter(# Type 5 recoveries can lead to double counting, check RMIS manual
+    filter(!!!filter_conditions,
+           # Type 5 recoveries can lead to double counting, check RMIS manual
            sample_type!=5, 
            # Only succesfully decoded recoveries
            tag_status==1,
            brood_year>=first_by,
            brood_year<=last_by,
            run_year>=first_by+2,
-           run_year<=last_by+7) %>% 
-    tidy_recoveries(lut_dir=lut_dir) %>% 
-    filter(!!!filter_conditions)
+           run_year<=last_by+7)
+
   } # End parallel for loop
 
     # Stop the parallel cluster
