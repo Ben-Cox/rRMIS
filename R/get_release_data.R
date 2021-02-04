@@ -8,7 +8,7 @@
 #' @export
 #'
 get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
-  if(is.null(dir))dir <- "Data"
+  if(is.null(dir))dir <- "RMIS"
   if(!file.exists(file.path(dir,"RL041_ALL_FULLSET.zip"))) download_releases(dir=dir)
   
   read_releases(first_by=first_by, 

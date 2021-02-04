@@ -8,7 +8,7 @@
 #' @export
 read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
   require(readr)
-  if(is.null(dir)){dir <- "Data"}
+  if(is.null(dir)){dir <- "RMIS"}
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
   if(!file.exists(file)){download_releases(dir=dir)}
   

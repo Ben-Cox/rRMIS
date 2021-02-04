@@ -9,7 +9,7 @@
 #' @export
 #'
 filter_and_combine_recoveries <- function(first_by, last_by, ...){
-  if(!dir.exists("Data/Recoveries") || length(list.files("Data/Recoveries"))==0){stop("No recovery data found")}
+  if(!dir.exists("RMIS/Recoveries") || length(list.files("RMIS/Recoveries"))==0){stop("No recovery data found")}
   # Create quosure for filter conditions passed in: need to document examples. 
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)

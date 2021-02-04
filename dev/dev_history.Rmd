@@ -52,9 +52,9 @@ fusen::fill_description(
 #'
 #' @examples download_releases()
 download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
-  if(is.null(dir)) dir <- "Data"
+  if(is.null(dir)) dir <- "RMIS"
   if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
-  message("Downloading Release data from RMIS into ~./", dir,".")
+  message("Downloading Release data from RMIS to ~./", dir,".")
   download.file(url=url, 
                 destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
                 quiet=TRUE)
@@ -76,7 +76,7 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
   #require(doParallel)
   #require(foreach)
 
-  if(is.null(dir)) {dir <- "Data/RMIS_LUTs"}
+  if(is.null(dir)) {dir <- "RMIS/LUTs"}
     if(!dir.exists(dir)) {
       dir.create(dir,recursive=TRUE) }
 
@@ -175,7 +175,7 @@ ftp_names <- RCurl::getURL(RMIS_url, dirlistonly = TRUE)
 #' @examples
 download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
 
-  if(is.null(dir)) dir <- "Data/Recoveries"
+  if(is.null(dir)) dir <- "RMIS/Recoveries"
   if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
 
 
@@ -205,7 +205,7 @@ download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
         
       registerDoParallel(cl=cl)
       
-message("This will take a while.")
+message("This could take a while.")
 
   # Do download, read and combine the csvs with parallel for loop
      foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
@@ -233,7 +233,7 @@ stopCluster(cl)
 #' @examples
 read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
   require(readr)
-  if(is.null(dir)){dir <- "Data"}
+  if(is.null(dir)){dir <- "RMIS"}
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
   if(!file.exists(file)){download_releases(dir=dir)}
   
@@ -290,7 +290,7 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
 #' @examples
 decode_release_data <- function(RMIS_releases,lut_dir=NULL){
   #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
-  if(is.null(lut_dir)){lut_dir <- "Data/RMIS_LUTs"}
+  if(is.null(lut_dir)){lut_dir <- "RMIS/LUTs"}
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
     message("Downloading LUTs from RMIS into ~./",lut_dir,".")
     download_luts(dir=lut_dir)
@@ -390,7 +390,7 @@ mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
 #'
 #' @examples
 filter_and_combine_recoveries <- function(first_by, last_by, ...){
-  if(!dir.exists("Data/Recoveries") || length(list.files("Data/Recoveries"))==0){stop("No recovery data found")}
+  if(!dir.exists("RMIS/Recoveries") || length(list.files("RMIS/Recoveries"))==0){stop("No recovery data found")}
   # Create quosure for filter conditions passed in: need to document examples. 
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
@@ -467,11 +467,11 @@ tidy_recoveries <- function(recoveries) {
   
   RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#overies 
 
-  gear_lu <- read_csv("RMIS_LUTs/gear.zip", col_types = cols(fishery = "d"))
+  gear_lu <- read_csv("RMIS/LUTs/gear.zip", col_types = cols(fishery = "d"))
   
-  fishery_lu2 <- read_csv("RMIS_LUTs/fishery.zip", col_types = cols(fishery = "d"))
+  fishery_lu2 <- read_csv("RMIS/LUTs/fishery.zip", col_types = cols(fishery = "d"))
   
-  RMIS_locations <- read_csv("RMIS_LUTs/LC041_ALL_FULLSET.zip", col_types = cols(.default = "c"), progress=FALSE)
+  RMIS_locations <- read_csv("RMIS/LUTs/LC041_ALL_FULLSET.zip", col_types = cols(.default = "c"), progress=FALSE)
 
   # Get unique recovery location/fishery rows from recoveries, used to create a mgt fishery lut for the recoveries
     unique_rec_locs <- RMIS_recoveries %>% select(recovery_location_code,fishery) %>% distinct() %>% mutate(temp_prefix=NA)
@@ -544,7 +544,7 @@ tidy_recoveries <- function(recoveries) {
 #'
 #' @examples
 get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
-  if(is.null(dir))dir <- "Data"
+  if(is.null(dir))dir <- "RMIS"
   if(!file.exists(file.path(dir,"RL041_ALL_FULLSET.zip"))) download_releases(dir=dir)
   
   read_releases(first_by=first_by, 

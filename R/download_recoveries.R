@@ -11,7 +11,7 @@
 #'
 download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
 
-  if(is.null(dir)) dir <- "Data/Recoveries"
+  if(is.null(dir)) dir <- "RMIS/Recoveries"
   if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
 
 
@@ -41,7 +41,7 @@ download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
         
       registerDoParallel(cl=cl)
       
-message("This will take a while.")
+message("This could take a while.")
 
   # Do download, read and combine the csvs with parallel for loop
      foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
