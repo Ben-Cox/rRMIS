@@ -179,11 +179,10 @@ ftp_names <- RCurl::getURL(RMIS_url, dirlistonly = TRUE)
 #' @export
 #'
 #' @examples
-download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
+download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir="RMIS/Recoveries") {
 
-  if(is.null(dir)) dir <- "RMIS/Recoveries"
+  #if(is.null(dir)) dir <- "RMIS/Recoveries"
   if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
-
 
   if(by_brood){
     
@@ -237,10 +236,11 @@ stopCluster(cl)
 #' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
 #' @export
 #' @examples
-read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
+read_releases <- function(first_by=NULL, last_by=NULL, dir="RMIS"){
   require(readr)
-  if(is.null(dir)){dir <- "RMIS"}
+ # if(is.null(dir)){dir <- "RMIS"}
   file <- file.path(dir, "RL041_ALL_FULLSET.zip")
+  
   if(!file.exists(file)){download_releases(dir=dir)}
   
  if (!is.null(first_by) & !is.null(last_by)) {  
@@ -296,7 +296,6 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
 decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
  
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
-   # message("Downloading LUTs from RMIS into ~./",lut_dir,".")
     download_luts(lut_dir=lut_dir)
     }
   
@@ -387,6 +386,7 @@ mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
 #'
 #' @param first_by 
 #' @param last_by 
+#' @param rec_dir Directory where recovery data were downloaded
 #' @param ... filter conditions for RMIS fields 
 #' @importFrom rlang quos
 #' @importFrom rlang !!!
@@ -394,17 +394,19 @@ mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
 #' @export
 #'
 #' @examples
-filter_and_combine_recoveries <- function(first_by, last_by, ...){
-  if(!dir.exists("RMIS/Recoveries") || length(list.files("RMIS/Recoveries"))==0){stop("No recovery data found")}
+filter_and_combine_recoveries <- function(first_by, last_by, rec_dir="RMIS/Recoveries", lut_dir="RMIS/LUTs", ...){
+  
+  if(!dir.exists(rec_dir) || length(list.files(rec_dir))==0){stop("No recovery data found")}
+  
   # Create quosure for filter conditions passed in: need to document examples. 
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
 
-  files <- list.files("RMIS/Recoveries", full.names=TRUE)
+  files <- list.files(lut_dir, full.names=TRUE)
 
   Releases <- read_releases() %>% decode_release_data()
   
-  species_lu <- read_csv("RMIS/LUTs/species.zip", 
+  species_lu <- read_csv(file.path(lut_dir,"species.zip"), 
                          col_types=cols(species=col_integer(), 
                                         species_name=col_character(),
                                         species_name=col_character())) %>% 
@@ -467,16 +469,16 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
 #' @export
 #'
 #' @examples
-tidy_recoveries <- function(recoveries) {
+tidy_recoveries <- function(recoveries,lut_dir="RMIS/LUTs") {
   #using("readxl") 
   
   RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#overies 
 
-  gear_lu <- read_csv("RMIS/LUTs/gear.zip", col_types = cols(fishery = "d"))
+  gear_lu <- read_csv(file.path(lut_dir,"gear.zip"), col_types = cols(fishery = "d"))
   
-  fishery_lu2 <- read_csv("RMIS/LUTs/fishery.zip", col_types = cols(fishery = "d"))
+  fishery_lu2 <- read_csv(file.path(lut_dir,"fishery.zip"), col_types = cols(fishery = "d"))
   
-  RMIS_locations <- read_csv("RMIS/LUTs/LC041_ALL_FULLSET.zip", col_types = cols(.default = "c"), progress=FALSE)
+  RMIS_locations <- read_csv(file.path(lut_dir,"LC041_ALL_FULLSET.zip"), col_types = cols(.default = "c"), progress=FALSE)
 
   # Get unique recovery location/fishery rows from recoveries, used to create a mgt fishery lut for the recoveries
     unique_rec_locs <- RMIS_recoveries %>% select(recovery_location_code,fishery) %>% distinct() %>% mutate(temp_prefix=NA)

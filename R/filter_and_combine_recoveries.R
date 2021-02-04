@@ -2,23 +2,26 @@
 #'
 #' @param first_by 
 #' @param last_by 
+#' @param rec_dir Directory where recovery data were downloaded
 #' @param ... filter conditions for RMIS fields 
 #' @importFrom rlang quos
 #' @importFrom rlang !!!
 #' @return
 #' @export
 #'
-filter_and_combine_recoveries <- function(first_by, last_by, ...){
-  if(!dir.exists("RMIS/Recoveries") || length(list.files("RMIS/Recoveries"))==0){stop("No recovery data found")}
+filter_and_combine_recoveries <- function(first_by, last_by, rec_dir="RMIS/Recoveries", lut_dir="RMIS/LUTs", ...){
+  
+  if(!dir.exists(rec_dir) || length(list.files(rec_dir))==0){stop("No recovery data found")}
+  
   # Create quosure for filter conditions passed in: need to document examples. 
   # Can pass in any filter conditions using RMIS field names.
   filter_conditions <- rlang::quos(...)
 
-  files <- list.files("RMIS/Recoveries", full.names=TRUE)
+  files <- list.files(lut_dir, full.names=TRUE)
 
   Releases <- read_releases() %>% decode_release_data()
   
-  species_lu <- read_csv("RMIS/LUTs/species.zip", 
+  species_lu <- read_csv(file.path(lut_dir,"species.zip"), 
                          col_types=cols(species=col_integer(), 
                                         species_name=col_character(),
                                         species_name=col_character())) %>% 

@@ -4,7 +4,7 @@
 \alias{read_releases}
 \title{Read release data}
 \usage{
-read_releases(first_by = NULL, last_by = NULL, dir = NULL)
+read_releases(first_by = NULL, last_by = NULL, dir = "RMIS")
 }
 \arguments{
 \item{first_by}{first brood year of data}

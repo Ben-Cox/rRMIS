@@ -5,16 +5,16 @@
 #' @return A dataframe with foreign keys decoded from LUTs
 #' @export
 #'
-tidy_recoveries <- function(recoveries) {
+tidy_recoveries <- function(recoveries,lut_dir="RMIS/LUTs") {
   #using("readxl") 
   
   RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#overies 
 
-  gear_lu <- read_csv("RMIS/LUTs/gear.zip", col_types = cols(fishery = "d"))
+  gear_lu <- read_csv(file.path(lut_dir,"gear.zip"), col_types = cols(fishery = "d"))
   
-  fishery_lu2 <- read_csv("RMIS/LUTs/fishery.zip", col_types = cols(fishery = "d"))
+  fishery_lu2 <- read_csv(file.path(lut_dir,"fishery.zip"), col_types = cols(fishery = "d"))
   
-  RMIS_locations <- read_csv("RMIS/LUTs/LC041_ALL_FULLSET.zip", col_types = cols(.default = "c"), progress=FALSE)
+  RMIS_locations <- read_csv(file.path(lut_dir,"LC041_ALL_FULLSET.zip"), col_types = cols(.default = "c"), progress=FALSE)
 
   # Get unique recovery location/fishery rows from recoveries, used to create a mgt fishery lut for the recoveries
     unique_rec_locs <- RMIS_recoveries %>% select(recovery_location_code,fishery) %>% distinct() %>% mutate(temp_prefix=NA)

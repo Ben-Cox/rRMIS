@@ -8,7 +8,6 @@
 decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
  
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
-   # message("Downloading LUTs from RMIS into ~./",lut_dir,".")
     download_luts(lut_dir=lut_dir)
     }
   

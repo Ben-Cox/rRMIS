@@ -9,11 +9,10 @@
 #' @return Downloads .zip files of recovery data to local dir
 #' @export
 #'
-download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=NULL) {
+download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir="RMIS/Recoveries") {
 
-  if(is.null(dir)) dir <- "RMIS/Recoveries"
+  #if(is.null(dir)) dir <- "RMIS/Recoveries"
   if(!dir.exists(dir)){dir.create(dir, recursive=TRUE)}
-
 
   if(by_brood){
     

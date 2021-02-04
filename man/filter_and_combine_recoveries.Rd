@@ -4,12 +4,20 @@
 \alias{filter_and_combine_recoveries}
 \title{Filter and combine recoveries}
 \usage{
-filter_and_combine_recoveries(first_by, last_by, ...)
+filter_and_combine_recoveries(
+  first_by,
+  last_by,
+  rec_dir = "RMIS/Recoveries",
+  lut_dir = "RMIS/LUTs",
+  ...
+)
 }
 \arguments{
 \item{first_by}{}
 
 \item{last_by}{}
+
+\item{rec_dir}{Directory where recovery data were downloaded}
 
 \item{...}{filter conditions for RMIS fields}
 }

@@ -4,7 +4,7 @@
 \alias{tidy_recoveries}
 \title{tidy up recovery data}
 \usage{
-tidy_recoveries(recoveries)
+tidy_recoveries(recoveries, lut_dir = "RMIS/LUTs")
 }
 \arguments{
 \item{recoveries}{A dataframe of recovery data from RMIS}
