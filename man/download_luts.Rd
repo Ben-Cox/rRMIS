@@ -4,14 +4,16 @@
 \alias{download_luts}
 \title{Download RMIS LUTs}
 \usage{
-download_luts(url = "ftp://ftp.rmpc.org/pub/data/", dir = NULL)
+download_luts(lut_dir = "RMIS/LUTs")
 }
 \arguments{
-\item{url}{url to RMIS ftp serer}
+\item{lut_dir}{Directory to save RMIS lookup tables. If \code{NULL} (the default) puts luts in a RMIS_LUTs folder in working directory.}
 
-\item{dir}{Directory to save RMIS lookup tables. If \code{NULL} (the default) puts luts in a RMIS_LUTs folder in working directory.}
+\item{url}{url to RMIS ftp serer}
 }
 \value{
+\code{NULL}
+
 Downloads lookup tables from RMIS into chosen dir
 }
 \description{

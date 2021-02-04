@@ -4,15 +4,12 @@
 \alias{download_releases}
 \title{Download release data from RMIS}
 \usage{
-download_releases(
-  url = "ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip",
-  dir = NULL
-)
+download_releases(file = "RL041_ALL_FULLSET.zip", dir = "RMIS")
 }
 \arguments{
-\item{url}{the url to the full CWT release data set on the RMIS ftp server}
-
 \item{dir}{Directory to save downloaded file. If \code{NULL} (the default), saves in Data in working directory.}
+
+\item{url}{the url to the full CWT release data set on the RMIS ftp server}
 }
 \value{
 \code{NULL}

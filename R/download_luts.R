@@ -34,6 +34,7 @@ url <- get("url",RMIS.globals)
       
        doParallel::registerDoParallel(cl=cl)
      
+message("Downloading LUTs from RMIS to ~./",lut_dir,".")
 
   foreach::foreach(i=seq_along(ftp_paths)) %dopar% {
     download.file(url=ftp_paths[i], destfile=dest_paths[i], quiet=TRUE)
@@ -41,4 +42,5 @@ url <- get("url",RMIS.globals)
       invisible()
     stopCluster(cl)
 } 
+
 

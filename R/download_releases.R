@@ -24,17 +24,3 @@ RMIS.globals <- new.env()
 RMIS.globals$url <- "ftp://ftp.rmpc.org/pub/data"
 RMIS.globals$rel_file <- "RL041_ALL_FULLSET.zip"
 
-# modify_url <- function(url){
-#   assign("url", url, RMIS.globals)
-# }
-#' Fix url if it changes
-#'
-#' @param url 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-set_url <- function(url){
-  RMIS.globals$url <- url
-}

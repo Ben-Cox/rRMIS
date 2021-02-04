@@ -51,8 +51,10 @@ fusen::fill_description(
 #' @export
 #'
 #' @examples download_releases()
-download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET.zip", dir=NULL){
-  if(is.null(dir)) dir <- "RMIS"
+download_releases <- function(file="RL041_ALL_FULLSET.zip", dir="RMIS"){
+  #if(is.null(dir)) dir <- "RMIS"
+  url <- file.path(get("url",env=RMIS.globals), file)
+  #dir <- file.path(url, file)
   if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
   message("Downloading Release data from RMIS to ~./", dir,".")
   download.file(url=url, 
@@ -60,27 +62,29 @@ download_releases <- function(url="ftp://ftp.rmpc.org/pub/data/RL041_ALL_FULLSET
                 quiet=TRUE)
 }
 
+RMIS.globals <- new.env()
+RMIS.globals$url <- "ftp://ftp.rmpc.org/pub/data"
+RMIS.globals$rel_file <- "RL041_ALL_FULLSET.zip"
+
 ```
 
 ```{r function-2}
 #' Download RMIS LUTs
 #' @description Downloads lookup tables from RMIS ftp server.
 #' @param url url to RMIS ftp serer 
-#' @param dir Directory to save RMIS lookup tables. If `NULL` (the default) puts luts in a RMIS_LUTs folder in working directory.
-#' @return NULL
+#' @param lut_dir Directory to save RMIS lookup tables. If `NULL` (the default) puts luts in a RMIS_LUTs folder in working directory.
+#' @return `NULL`
 #' @return Downloads lookup tables from RMIS into chosen dir
 #' @export
-#' @examples
-download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
+download_luts <- function(lut_dir="RMIS/LUTs"){
   #require(parallel)
   #require(doParallel)
   #require(foreach)
+url <- get("url",RMIS.globals)
+ # if(is.null(dir)) {dir <- "RMIS/LUTs"}
+    if(!dir.exists(lut_dir)) {dir.create(lut_dir,recursive=TRUE) }
 
-  if(is.null(dir)) {dir <- "RMIS/LUTs"}
-    if(!dir.exists(dir)) {
-      dir.create(dir,recursive=TRUE) }
-
-  lut_dir <- dir
+  #lut_dir <- dir
   
   lut_filenames <- c("LC041_ALL_FULLSET.zip",
                     "run.zip",
@@ -95,12 +99,13 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
                     )
 
     ftp_paths <- file.path(url, lut_filenames)
-    dest_paths <- file.path(dir, lut_filenames)                
+    dest_paths <- file.path(lut_dir, lut_filenames)                
    
        cl <- parallel::makeCluster(parallel::detectCores())
       
        doParallel::registerDoParallel(cl=cl)
      
+message("Downloading LUTs from RMIS to ~./",lut_dir,".")
 
   foreach::foreach(i=seq_along(ftp_paths)) %dopar% {
     download.file(url=ftp_paths[i], destfile=dest_paths[i], quiet=TRUE)
@@ -108,6 +113,7 @@ download_luts <- function(url="ftp://ftp.rmpc.org/pub/data/",dir=NULL){
       invisible()
     stopCluster(cl)
 } 
+
 
 ```
 
@@ -287,12 +293,10 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir=NULL){
 #' @return Dataframe of RMIS release data with decoded field names.
 #' @export
 #'
-#' @examples
-decode_release_data <- function(RMIS_releases,lut_dir=NULL){
-  #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
-  if(is.null(lut_dir)){lut_dir <- "RMIS/LUTs"}
+decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
+ 
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
-    message("Downloading LUTs from RMIS into ~./",lut_dir,".")
+   # message("Downloading LUTs from RMIS into ~./",lut_dir,".")
     download_luts(dir=lut_dir)
     }
   
@@ -375,6 +379,7 @@ agencies_no_domain <- CR_rel_data %>%
 mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
 
  }
+
 ```
 
 ```{r function-7}
@@ -553,6 +558,20 @@ get_release_data <- function(first_by=NULL, last_by=NULL, dir=NULL){
     decode_release_data()
 }
   
+```
+
+```{r function-10}
+#' set the RMIS ftp url
+#'
+#' @param url 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+set_url <- function (url) {
+    RMIS.globals$url <- url
+}
 ```
 
 

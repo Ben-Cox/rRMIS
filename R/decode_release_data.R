@@ -6,10 +6,9 @@
 #' @export
 #'
 decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
-  #RMIS_releases <- read_releases(first_by=1974,last_by=1974)
- # if(is.null(lut_dir)){lut_dir <- "RMIS/LUTs"}
+ 
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
-    message("Downloading LUTs from RMIS into ~./",lut_dir,".")
+   # message("Downloading LUTs from RMIS into ~./",lut_dir,".")
     download_luts(dir=lut_dir)
     }
   
@@ -92,3 +91,4 @@ agencies_no_domain <- CR_rel_data %>%
 mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
 
  }
+

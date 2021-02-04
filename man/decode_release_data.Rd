@@ -4,7 +4,7 @@
 \alias{decode_release_data}
 \title{Lookup foreign keys in RMIS release data}
 \usage{
-decode_release_data(RMIS_releases, lut_dir = NULL)
+decode_release_data(RMIS_releases, lut_dir = "RMIS/LUTs")
 }
 \arguments{
 \item{RMIS_releases}{read in from read_releases()}
