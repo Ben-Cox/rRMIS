@@ -9,7 +9,7 @@
 read_releases <- function(first_by=NULL, last_by=NULL, dir="RMIS"){
   require(readr)
  # if(is.null(dir)){dir <- "RMIS"}
-  file <- file.path(dir, "RL041_ALL_FULLSET.zip")
+  file <- file.path(dir, get("rel_file",env=RMIS.globals))
   
   if(!file.exists(file)){download_releases(dir=dir)}
   

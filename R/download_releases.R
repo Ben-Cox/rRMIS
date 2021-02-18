@@ -11,12 +11,12 @@
 #' @examples download_releases()
 download_releases <- function(file="RL041_ALL_FULLSET.zip", dir="RMIS"){
   #if(is.null(dir)) dir <- "RMIS"
-  url <- file.path(get("url",env=RMIS.globals), file)
+  url <- file.path(get("url",env=RMIS.globals), get("rel_file",env=RMIS.globals))
   #dir <- file.path(url, file)
   if(!dir.exists(dir)) dir.create(dir,recursive=TRUE)
   message("Downloading Release data from RMIS to ~./", dir,".")
   download.file(url=url, 
-                destfile=file.path(dir,"RL041_ALL_FULLSET.zip"), 
+                destfile=file.path(dir,get("rel_file",env=RMIS.globals)), 
                 quiet=TRUE)
 }
 
