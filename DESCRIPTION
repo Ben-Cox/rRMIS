@@ -19,7 +19,9 @@ Imports:
     lubridate,
     magrittr,
     RCurl,
-    rlang
+    rlang,
+    stringr,
+    tidyr
 Suggests: 
     knitr,
     rmarkdown
