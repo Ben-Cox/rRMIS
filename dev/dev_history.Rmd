@@ -126,7 +126,7 @@ message("Downloading LUTs from RMIS to ~./",lut_dir,".")
 #' @param temp_dir File to hold downloaded csv's
 #' @importFrom RCurl getURL
 #' @return A list with download urls for each file and destination paths for each file
-#' @export
+#'
 #' @examples
 make_file_list <- function(startYear, 
                               endYear,
@@ -234,10 +234,10 @@ stopCluster(cl)
 #' @param dir Directory where release data were downloaded
 #' @import readr
 #' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
-#' @export
+#' 
 #' @examples
 read_releases <- function(first_by=NULL, last_by=NULL, dir="RMIS"){
-  require(readr)
+  #require(readr)
  # if(is.null(dir)){dir <- "RMIS"}
   file <- file.path(dir, get("rel_file",env=RMIS.globals))
   
@@ -291,7 +291,7 @@ read_releases <- function(first_by=NULL, last_by=NULL, dir="RMIS"){
 #' @param RMIS_releases read in from read_releases()
 #' @param lut_dir Directory with RMIS lookup tables if `NULL` (default) looks in Data/RMIS_LUTs 
 #' @return Dataframe of RMIS release data with decoded field names.
-#' @export
+#' 
 #'
 decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
  
@@ -843,11 +843,11 @@ calc_tagrates <- function(release_data){
 #' @examples
 juv_tr_lut <- function(first_by, last_by, ...){
   filter_conditions <- rlang::quos(...)
-read_releases(first_by, last_by) %>% 
-  decode_release_data() %>% 
+
+get_release_data(first_by=first_by,last_by=last_by) %>% 
   filter(!!!filter_conditions) %>%  
+  releases_for_tr() %>%
   group_releases() %>% 
-  releases_for_tr() %>% 
   calc_tagrates() 
 }
 ```

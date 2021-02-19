@@ -9,10 +9,10 @@
 #'
 juv_tr_lut <- function(first_by, last_by, ...){
   filter_conditions <- rlang::quos(...)
-read_releases(first_by, last_by) %>% 
-  decode_release_data() %>% 
+
+get_release_data(first_by=first_by,last_by=last_by) %>% 
   filter(!!!filter_conditions) %>%  
+  releases_for_tr() %>%
   group_releases() %>% 
-  releases_for_tr() %>% 
   calc_tagrates() 
 }

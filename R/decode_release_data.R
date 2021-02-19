@@ -3,7 +3,7 @@
 #' @param RMIS_releases read in from read_releases()
 #' @param lut_dir Directory with RMIS lookup tables if `NULL` (default) looks in Data/RMIS_LUTs 
 #' @return Dataframe of RMIS release data with decoded field names.
-#' @export
+#' 
 #'
 decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
  

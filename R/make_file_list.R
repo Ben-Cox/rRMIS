@@ -6,7 +6,7 @@
 #' @param temp_dir File to hold downloaded csv's
 #' @importFrom RCurl getURL
 #' @return A list with download urls for each file and destination paths for each file
-#' @export
+#'
 make_file_list <- function(startYear, 
                               endYear,
                               RMIS_url="ftp://ftp.rmpc.org/pub/data/", 
