@@ -2,7 +2,7 @@
 % Please edit documentation in R/releases_for_tr.R
 \name{releases_for_tr}
 \alias{releases_for_tr}
-\title{Tidy release data for tag rate calculations}
+\title{prep release data for tag rate calculations}
 \usage{
 releases_for_tr(release_data)
 }
@@ -10,8 +10,8 @@ releases_for_tr(release_data)
 \item{release_data}{}
 }
 \value{
-tidied data frame of release data by AD clip/CWT status
+Table with a row for each tag_code_or_release_id, with 4 new columns for CWT and clip status: AdClipped_CWT, AdClipped_NoCWT, Unclipped_CWT, Unclipped_NoCWT and a composite key of species,hatchery,run,stock,release location for grouping when doing tagrate calcs
 }
 \description{
-Tidy release data for tag rate calculations
+prep release data for tag rate calculations
 }

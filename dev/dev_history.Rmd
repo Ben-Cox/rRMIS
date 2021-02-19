@@ -375,7 +375,13 @@ agencies_no_domain <- CR_rel_data %>%
 
 # Change release date to date format
  CR_rel_data %>% 
-mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
+   
+   #tibble(last_release_date=c("20200507","202004","2020",NA)) %>% 
+   mutate(date_len=stringr::str_length(last_release_date)) %>% 
+   mutate(last_release_date=case_when(date_len==4 ~ paste0(last_release_date,"0101"), # only year reported to RMIS YYYY
+                                      date_len==6 ~ paste0(last_release_date,"14"),   # only month reported to RMIS YYYYmm
+                                      date_len==8 ~ last_release_date)) %>%   # full date reported YYYYmmdd
+   mutate(last_release_date=lubridate::ymd(last_release_date))
 
  }
 
@@ -552,7 +558,7 @@ tidy_recoveries <- function(recoveries,lut_dir="RMIS/LUTs") {
 #'
 get_release_data <- function(first_by=NULL, last_by=NULL, rel_dir="RMIS",lut_dir="RMIS/LUTs", dl_now=FALSE){
   #if(is.null(dir))dir <- "RMIS"
-  rel_file <- file.path(rel_dir,"RL041_ALL_FULLSET.zip")
+  rel_file <- file.path(rel_dir,get("rel_file",env=RMIS.globals))
  
   if((file.exists(rel_file) & dl_now==TRUE) | !file.exists(rel_file)) {
     download_releases(dir=rel_dir)
@@ -581,8 +587,8 @@ set_url <- function (url) {
 ```
 
 ```{r function-11}
-#' set the RMIS release file name
-#'
+#' Set the RMIS release file name
+#' only necessary to use if RMIS changes this filename
 #' @param filename 
 #'
 #' @return
@@ -597,29 +603,33 @@ set_release_filename <- function(filename){
 
 
 ```{r function-12}
-#' Tidy release data for tag rate calculations
+#' prep release data for tag rate calculations
 #'
 #' @param release_data 
 #'
-#' @return tidied data frame of release data by AD clip/CWT status
-#' @export
+#' @return Table with a row for each tag_code_or_release_id, with 4 new columns for CWT and clip status: AdClipped_CWT, AdClipped_NoCWT, Unclipped_CWT, Unclipped_NoCWT and a composite key of species,hatchery,run,stock,release location for grouping when doing tagrate calcs
+#' 
 #'
 #' @examples
 releases_for_tr <- function(release_data){
-#using("tidyverse")
   # function works as follows:
   # 1) strip tag nums/marks from raw release data i.e., columns cwt_1st... cwt_2nd etc....
   # 2) filter original data by mark (1st and 2nd) for Ad and unclipped
   # 3) rename count column with cwt and mark status
   # 4) bind rows with same cwt and mark status (i.e., same mark/cwt from 'cwt_1st' and 'cwt_2nd' columns)
   # 5) join all the bound tables together to the tag info in step 1 by tag code
-  
-# Returns:
-  # Table with a row for each tag_code_or_release_id, with 4 new columns for CWT and clip status: AdClipped_CWT, AdClipped_NoCWT, Unclipped_CWT, Unclipped_NoCWT
-  
+
   d <- release_data
- 
-d %>% 
+
+ d %>% 
+  mutate(LastRelDate=last_release_date) %>% 
+  tidyr::unite(col=comp_key, 
+               species,
+               hatchery_location_code, 
+               run, 
+               stock_location_code, 
+               release_location_code, 
+               brood_year,remove=FALSE) %>% 
    
   # First, drop cwt_1st, 2nd etc. from raw release data (retains tag info but not marks/counts)
 select(-c(cwt_1st_mark,
@@ -701,7 +711,9 @@ select(-c(cwt_1st_mark,
       group_by(tag_code_or_release_id) %>% 
       summarise_all(sum),
     
-    by="tag_code_or_release_id")
+    by="tag_code_or_release_id") %>% 
+   mutate_at(vars(contains("CWT")), ~tidyr::replace_na(.x, 0)) %>% # replace NA counts in new columns with 0
+   mutate(DIT=if_else(Ad_CWT==0,"DIT",NA_character_)) # tag codes or id's with no Ad CWT releases are considered DIT groups
 
 }
 
@@ -709,59 +721,19 @@ select(-c(cwt_1st_mark,
 ```
 
 ```{r function-13}
-
 #' Add group ids to releases 
 #' groups multiple tag codes released from the same hatchery if released within 3 weeks and 4.5 grams avg wt.
 #'
 #' @param release_data 
 #'
 #' @return
-#' @export
+#' 
 #'
 #' @examples
 group_releases <- function(release_data){
-  
+
 d2 <- release_data %>% 
-  mutate(LastRelDate=case_when(stringr::str_length(last_release_date)==8 ~ lubridate::ymd(last_release_date),
-                               stringr::str_length(last_release_date)==6 ~ lubridate::ymd(paste0(last_release_date,"14")),
-                               stringr::str_length(last_release_date)==4 ~ lubridate::ymd(paste0(last_release_date,"0101"))),
-         comp_key=tidyr::unite(hatchery_location_code, run, stock_location_code, release_location_code, brood_year))
-  
-  #filter(species==1)
-
-# cols <- c("record_code",
-#           "tag_code_or_release_id",
-#           "release_agency",
-#           "run",
-#         #  "species",
-#           "hatchery_location_code",
-#           "stock_location_code",
-#           "release_location_code",
-#           "brood_year",
-#           "avg_weight",
-#           "last_release_date",
-#           "cwt_1st_mark",
-#           "non_cwt_1st_mark",
-#           "cwt_2nd_mark",
-#           "non_cwt_2nd_mark",
-#           "cwt_1st_mark_count",
-#           "non_cwt_1st_mark_count",
-#           "cwt_2nd_mark_count",
-#           "non_cwt_2nd_mark_count")
-# 
-# # Drop unused columns
-# #d2 <- d2[,cols]
-# #head(d2)
-# Convert last release date to date format
-#d2$LastRelDate <- as.Date(as.character(d2$last_release_date),format="%Y%m%d")
-
-# Some agencies only report month and year, which returns NA in line above. Give these arbitrary day 14 (mid-month)
-#d2$LastRelDate[is.na(d2$LastRelDate)] <- as.Date(paste(as.character(d2$last_release_date[is.na(d2$LastRelDate)]),"14",sep=""),format="%Y%m%d")
-
-#key_cols <- c("tag_code_or_release_id","hatchery_location_code","release_location_code","stock_location_code","run","brood_year","LastRelDate","avg_weight")
-
-# Make a composite key field for hatchery, run, stock, release location and brood year
-#d2$comp_key <- paste(d2$hatchery_location_code, d2$run, d2$stock_location_code, d2$release_location_code, d2$brood_year)
+  filter(!is.na(last_release_date)) 
 
 # Assign release groups ####
 
@@ -776,13 +748,13 @@ rel.id <- vector("integer", length=length(d2$comp_key))
 
 # For each unique release group     
 for (i in 1:length(unique_rels)) {
-     
+     #i <- 1
  # Subset original data for only the releases from unique release [i]
       d <- subset(d2, d2$comp_key == unique_rels[i], drop = F)    
 
  #  The first release for hatchery/release site/ brood year [i] is #1
       id <- 1
-          
+         # print(unique_rels[i])
  # While any tags in d have not been assigned a release id 
       while (any(rel.id[match(d$tag_code_or_release_id, d2$tag_code_or_release_id)] == 0)) {
            
@@ -791,7 +763,7 @@ for (i in 1:length(unique_rels)) {
                 
                # Then identify which tags in d are within 21 days of the minimum date of all the tags in d,
                # the abs () is unnecessary
-               g <- which(abs(d$LastRelDate - min(d$LastRelDate)) <= 21 ) } 
+               g <- which(abs(d$LastRelDate - min(d$LastRelDate,na.rm=TRUE)) <= 21 ) } 
            
      # Otherwise, 
            else {
@@ -799,7 +771,8 @@ for (i in 1:length(unique_rels)) {
                # identify which tags were released within 21 days of the first release in d 
                # AND 
                # within 4.5 grams of the first release's avg.wt
-               g <- which(abs(d$LastRel - min(d$LastRelDate)) <= 21 &  abs(d$avg_weight - min(d$avg_weight[which.min(d$LastRelDate)])) <= 4.5)
+               g <- which(abs(d$LastRelDate - min(d$LastRelDate,na.rm=TRUE)) <= 21 &  
+                            abs(d$avg_weight - min(d$avg_weight[which.min(d$LastRelDate)])) <= 4.5)
            }
            
      # Assign the tags identifed by g (above) the current release number
@@ -818,7 +791,7 @@ for (i in 1:length(unique_rels)) {
       # When while loop for hatchery/rel site/by [i] is done, bump up progress bar 
       # and loop around to next hatchery/release site/ brood year
       
-      #setTxtProgressBar(pb, i)
+     # setTxtProgressBar(pb, i)
 }
 #head(d2)
 # Add the release ids to the data
@@ -826,9 +799,87 @@ for (i in 1:length(unique_rels)) {
 
 d2
 }
+
 ```
 
+```{r function-14}
 
+#' Calculate tagrates from reshaped release data
+#'
+#' @param release_data 
+#'
+#' @return
+#' 
+#'
+#' @examples
+calc_tagrates <- function(release_data){
+  if(!any(colnames(release_data)=="rel_id")){stop("Release ids have not been assigned. Pipe releases through group_releases() first.")}
+  
+  release_data %>% group_by(comp_key,rel_id) %>% 
+  summarise(Ad_CWT=sum(Ad_CWT,na.rm=TRUE),Ad_NoCWT=sum(Ad_NoCWT,na.rm=TRUE),Unclipped_CWT=sum(Unclipped_CWT,na.rm=TRUE),Unclipped_NoCWT=sum(Unclipped_NoCWT,na.rm=TRUE)) %>% 
+  left_join(select(release_data,tag_code_or_release_id,comp_key,rel_id,DIT),by=c("comp_key"="comp_key","rel_id"="rel_id")) %>% 
+  mutate(NonMS=Ad_CWT/(Ad_CWT+Ad_NoCWT+Unclipped_CWT+Unclipped_NoCWT), MS=Ad_CWT/(Ad_CWT+Ad_NoCWT)) %>% 
+  ungroup %>% 
+  left_join(select(release_data, tag_code_or_release_id, record_code),by=c("tag_code_or_release_id"="tag_code_or_release_id")) %>%
+  filter(record_code=="T" & is.na(DIT)) %>% 
+  select(TagCode=tag_code_or_release_id, MS, NonMS) %>% 
+  tidyr::pivot_longer(cols=c(MS,NonMS),names_to="TagRateType",values_to="TR") %>% 
+    arrange(TagCode)
+  
+}
+
+```
+
+```{r function-15}
+#' Create a juvenile lookup table txt file
+#'
+#' @param first_by first brood year to pull
+#' @param last_by last brood year to pull
+#' @param ... filter conditions for decoded release data e.g., `species_name=="Chinook"`
+#'
+#' @return
+#' @export
+#'
+#' @examples
+juv_tr_lut <- function(first_by, last_by, ...){
+  filter_conditions <- rlang::quos(...)
+read_releases(first_by, last_by) %>% 
+  decode_release_data() %>% 
+  filter(!!!filter_conditions) %>%  
+  group_releases() %>% 
+  releases_for_tr() %>% 
+  calc_tagrates() 
+}
+```
+
+```{r function-16}
+#' Make a tag info lut
+#'
+#' @param first_by first brood year of releases
+#' @param last_by  last brood year of releases
+#' @param ...  other filter conditions passed in e.g., `species_name=="Chinook"`
+#'
+#' @return a table with release info for tag codes that meet brood year and other filter conditions
+#' @export
+#'
+#' @examples
+make_tag_info_lut <- function(first_by, last_by,...){
+  filter_conditions <- rlang::quos(...)
+  get_release_data(first_by=first_by,last_by=last_by) %>% 
+    releases_for_tr() %>% 
+    filter(record_code=="T",!!!filter_conditions) %>% 
+    select(TagCode=tag_code_or_release_id, 
+           brood_year,
+           agency=release_agency, 
+           hatchery, 
+           run=run_name,
+           stock, 
+           release_loc=release_site,
+          # rmis_region_name,
+          # rmis_domain, 
+           DIT)
+}
+```
 
 # There can be development actions
 

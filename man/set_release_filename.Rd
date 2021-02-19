@@ -2,7 +2,8 @@
 % Please edit documentation in R/set_release_filename.R
 \name{set_release_filename}
 \alias{set_release_filename}
-\title{set the RMIS release file name}
+\title{Set the RMIS release file name
+only necessary to use if RMIS changes this filename}
 \usage{
 set_release_filename(filename)
 }
@@ -13,5 +14,6 @@ set_release_filename(filename)
 
 }
 \description{
-set the RMIS release file name
+Set the RMIS release file name
+only necessary to use if RMIS changes this filename
 }

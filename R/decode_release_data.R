@@ -87,7 +87,13 @@ agencies_no_domain <- CR_rel_data %>%
 
 # Change release date to date format
  CR_rel_data %>% 
-mutate_at(vars(contains("release_date")),~suppressWarnings(lubridate::ymd(.x)))
+   
+   #tibble(last_release_date=c("20200507","202004","2020",NA)) %>% 
+   mutate(date_len=stringr::str_length(last_release_date)) %>% 
+   mutate(last_release_date=case_when(date_len==4 ~ paste0(last_release_date,"0101"), # only year reported to RMIS YYYY
+                                      date_len==6 ~ paste0(last_release_date,"14"),   # only month reported to RMIS YYYYmm
+                                      date_len==8 ~ last_release_date)) %>%   # full date reported YYYYmmdd
+   mutate(last_release_date=lubridate::ymd(last_release_date))
 
  }
 

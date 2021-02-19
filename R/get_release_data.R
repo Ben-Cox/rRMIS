@@ -10,7 +10,7 @@
 #'
 get_release_data <- function(first_by=NULL, last_by=NULL, rel_dir="RMIS",lut_dir="RMIS/LUTs", dl_now=FALSE){
   #if(is.null(dir))dir <- "RMIS"
-  rel_file <- file.path(rel_dir,"RL041_ALL_FULLSET.zip")
+  rel_file <- file.path(rel_dir,get("rel_file",env=RMIS.globals))
  
   if((file.exists(rel_file) & dl_now==TRUE) | !file.exists(rel_file)) {
     download_releases(dir=rel_dir)
