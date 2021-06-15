@@ -478,7 +478,7 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
 tidy_recoveries <- function(recoveries,lut_dir="RMIS/LUTs") {
   #using("readxl") 
   
-  RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#overies 
+  RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#Recoveries 
 
   gear_lu <- read_csv(file.path(lut_dir,"gear.zip"), col_types = cols(fishery = "d"))
   
