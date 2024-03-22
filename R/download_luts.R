@@ -15,7 +15,7 @@ url <- get("url",RMIS.globals)
 
   #lut_dir <- dir
   
-  lut_filenames <- c("LC041_ALL_FULLSET.zip",
+  lut_filenames <- c("LC042_ALL_FULLSET.zip",
                     "run.zip",
                     "species.zip",
                     "study_type.zip",
@@ -29,18 +29,14 @@ url <- get("url",RMIS.globals)
 
     ftp_paths <- file.path(url, lut_filenames)
     dest_paths <- file.path(lut_dir, lut_filenames)                
-   
-       cl <- parallel::makeCluster(parallel::detectCores())
-      
-       doParallel::registerDoParallel(cl=cl)
+
      
 message("Downloading LUTs from RMIS to ~./",lut_dir,".")
 
-  foreach::foreach(i=seq_along(ftp_paths)) %dopar% {
+for (i in 1:length(ftp_paths)){
     download.file(url=ftp_paths[i], destfile=dest_paths[i], quiet=TRUE)
-    } %>% 
-      invisible()
-    stopCluster(cl)
 } 
+
+}
 
 

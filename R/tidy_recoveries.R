@@ -14,7 +14,7 @@ tidy_recoveries <- function(recoveries,lut_dir="RMIS/LUTs") {
   
   fishery_lu2 <- read_csv(file.path(lut_dir,"fishery.zip"), col_types = cols(fishery = "d"))
   
-  RMIS_locations <- read_csv(file.path(lut_dir,"LC041_ALL_FULLSET.zip"), col_types = cols(.default = "c"), progress=FALSE)
+  RMIS_locations <- read_csv(file.path(lut_dir,"LC042_ALL_FULLSET.zip"), col_types = cols(.default = "c"), progress=FALSE)
 
   # Get unique recovery location/fishery rows from recoveries, used to create a mgt fishery lut for the recoveries
     unique_rec_locs <- RMIS_recoveries %>% select(recovery_location_code,fishery) %>% distinct() %>% mutate(temp_prefix=NA)

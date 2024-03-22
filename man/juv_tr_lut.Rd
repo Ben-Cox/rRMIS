@@ -13,9 +13,6 @@ juv_tr_lut(first_by, last_by, ...)
 
 \item{...}{filter conditions for decoded release data e.g., \code{species_name=="Chinook"}}
 }
-\value{
-
-}
 \description{
 Create a juvenile lookup table txt file
 }

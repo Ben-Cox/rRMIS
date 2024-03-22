@@ -21,9 +21,6 @@ filter_and_combine_recoveries(
 
 \item{rec_dir}{Directory where recovery data were downloaded}
 }
-\value{
-
-}
 \description{
 Filter and combine recoveries
 }

@@ -10,9 +10,6 @@ set_release_filename(filename)
 \arguments{
 \item{filename}{}
 }
-\value{
-
-}
 \description{
 Set the RMIS release file name
 only necessary to use if RMIS changes this filename

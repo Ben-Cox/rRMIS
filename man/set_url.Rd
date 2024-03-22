@@ -9,9 +9,6 @@ set_url(url)
 \arguments{
 \item{url}{}
 }
-\value{
-
-}
 \description{
 set the RMIS ftp url
 }

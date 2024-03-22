@@ -10,9 +10,6 @@ group_releases(release_data)
 \arguments{
 \item{release_data}{}
 }
-\value{
-
-}
 \description{
 Add group ids to releases
 groups multiple tag codes released from the same hatchery if released within 3 weeks and 4.5 grams avg wt.

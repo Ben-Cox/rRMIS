@@ -9,9 +9,6 @@ calc_tagrates(release_data)
 \arguments{
 \item{release_data}{}
 }
-\value{
-
-}
 \description{
 Calculate tagrates from reshaped release data
 }

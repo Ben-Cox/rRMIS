@@ -4,12 +4,7 @@
 \alias{make_file_list}
 \title{Make a list of files to download}
 \usage{
-make_file_list(
-  startYear,
-  endYear,
-  RMIS_url = "ftp://ftp.rmpc.org/pub/data/",
-  dir = NULL
-)
+make_file_list(startYear, endYear, dir = NULL)
 }
 \arguments{
 \item{startYear}{First year of desired CWT recovery data}
