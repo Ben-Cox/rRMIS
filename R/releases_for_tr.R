@@ -3,7 +3,7 @@
 #' @param release_data 
 #'
 #' @return Table with a row for each tag_code_or_release_id, with 4 new columns for CWT and clip status: AdClipped_CWT, AdClipped_NoCWT, Unclipped_CWT, Unclipped_NoCWT and a composite key of species,hatchery,run,stock,release location for grouping when doing tagrate calcs
-#' 
+#' @export
 #'
 releases_for_tr <- function(release_data){
   # function works as follows:

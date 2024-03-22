@@ -21,6 +21,6 @@ download_releases <- function(file="RL041_ALL_FULLSET.zip", dir="RMIS"){
 }
 
 RMIS.globals <- new.env()
-RMIS.globals$url <- "ftp://ftp.rmpc.org/pub/data"
-RMIS.globals$rel_file <- "RL041_ALL_FULLSET.zip"
+RMIS.globals$url <- "https://www.rmpc.org/pub/data/"
+RMIS.globals$rel_file <- "RL042_ALL_FULLSET.zip"
 

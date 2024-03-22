@@ -12,7 +12,7 @@ decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
     }
   
  # Read lookup tables
-  RMIS_locations <- read_csv(file.path(lut_dir,"LC041_ALL_FULLSET.zip"), col_types=cols(.default="c"),progress=FALSE)
+  RMIS_locations <- read_csv(file.path(lut_dir,"LC042_ALL_FULLSET.zip"), col_types=cols(.default="c"),progress=FALSE)
   RMIS_runs <- read_csv(file.path(lut_dir,"run.zip"), col_types=cols(.default="c",run="i"),progress=FALSE)
   RMIS_species <- read_csv(file.path(lut_dir,"species.zip"), col_types=cols(.default="c",species="i"),progress=FALSE)
   RMIS_studytype <- read_csv(file.path(lut_dir,"study_type.zip"), col_types=cols(.default="c"),progress=FALSE)
