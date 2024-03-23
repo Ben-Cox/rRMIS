@@ -7,8 +7,8 @@
 get_release_data(
   first_by = NULL,
   last_by = NULL,
-  rel_dir = "RMIS",
-  lut_dir = "RMIS/LUTs",
+  rel_dir = RMIS.globals$rel_dir,
+  lut_dir = RMIS.globals$lut_dir,
   dl_now = FALSE
 )
 }
