@@ -32,7 +32,7 @@ download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=RMIS.global
     }
   
   # BUILD TEST FOR COMPLETED BROODs- maybe year(sys.Date()-1)?
-  #if(endYear>)
+
    # Create list with the file  paths
       file_list <- make_file_list(startYear, endYear, dir=dir)
       n_files <- length(file_list$files)
@@ -41,10 +41,10 @@ download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=RMIS.global
       cl <- parallel::makeCluster(parallel::detectCores())
 
       doParallel::registerDoParallel(cl)
-      #registerDoParallel(cl=cl)
- if(n_files>20){     
-message(paste0("This could take a while. There are ", n_files," files to download."))
- }
+      
+      message(paste0("There are ", n_files," files to download."))
+
+  if(n_files>20){message("This could take a second.")}     
       
   # Do download, read and combine the csvs with parallel for loop
 foreach::foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
