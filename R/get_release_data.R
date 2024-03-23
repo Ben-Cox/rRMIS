@@ -8,8 +8,8 @@
 #' @return A dataframe of the RMIS release data with foreign keys decoded.
 #' @export
 #'
-get_release_data <- function(first_by=NULL, last_by=NULL, rel_dir="RMIS",lut_dir="RMIS/LUTs", dl_now=FALSE){
-  #if(is.null(dir))dir <- "RMIS"
+get_release_data <- function(first_by=NULL, last_by=NULL, rel_dir=RMIS.globals$rel_dir, lut_dir=RMIS.globals$lut_dir, dl_now=FALSE){
+
   rel_file <- file.path(rel_dir,get("rel_file",env=RMIS.globals))
  
   if( dl_now==TRUE | !file.exists(rel_file)) {download_releases(dir=rel_dir)}

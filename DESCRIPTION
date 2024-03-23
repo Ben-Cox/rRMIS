@@ -10,11 +10,11 @@ Description: Download CWT release or recovery data from RMIS ftp
     text files.
 License: MIT + file LICENSE
 Depends: 
-    doParallel,
     dplyr,
-    parallel,
     readr
 Imports: 
+    parallel,
+    doParallel,
     lubridate,
     magrittr,
     RCurl,

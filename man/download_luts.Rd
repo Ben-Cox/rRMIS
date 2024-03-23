@@ -4,7 +4,7 @@
 \alias{download_luts}
 \title{Download RMIS LUTs}
 \usage{
-download_luts(lut_dir = "RMIS/LUTs")
+download_luts(lut_dir = RMIS.globals$lut_dir)
 }
 \arguments{
 \item{lut_dir}{Directory to save RMIS lookup tables. If \code{NULL} (the default) puts luts in a RMIS_LUTs folder in working directory.}

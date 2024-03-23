@@ -4,7 +4,12 @@
 \alias{download_recoveries}
 \title{Download CWT recoveries}
 \usage{
-download_recoveries(start_yr, end_yr, by_brood = TRUE, dir = "RMIS/Recoveries")
+download_recoveries(
+  start_yr,
+  end_yr,
+  by_brood = TRUE,
+  dir = RMIS.globals$rec_dir
+)
 }
 \arguments{
 \item{start_yr}{First year of recoveries}

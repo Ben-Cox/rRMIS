@@ -5,15 +5,11 @@
 #' @return `NULL`
 #' @return Downloads lookup tables from RMIS into chosen dir
 #' @export
-download_luts <- function(lut_dir="RMIS/LUTs"){
-  #require(parallel)
-  #require(doParallel)
-  #require(foreach)
-url <- get("url",RMIS.globals)
- # if(is.null(dir)) {dir <- "RMIS/LUTs"}
-    if(!dir.exists(lut_dir)) {dir.create(lut_dir,recursive=TRUE) }
+download_luts <- function(lut_dir=RMIS.globals$lut_dir){
 
-  #lut_dir <- dir
+url <- get("url",RMIS.globals)
+
+    if(!dir.exists(lut_dir)) {dir.create(lut_dir,recursive=TRUE) }
   
   lut_filenames <- c("LC042_ALL_FULLSET.zip",
                     "run.zip",
