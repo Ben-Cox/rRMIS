@@ -4,12 +4,12 @@
 \alias{decode_release_data}
 \title{Lookup foreign keys in RMIS release data}
 \usage{
-decode_release_data(RMIS_releases, lut_dir = "RMIS/LUTs")
+decode_release_data(RMIS_releases, lut_dir = RMIS.globals$lut_dir)
 }
 \arguments{
 \item{RMIS_releases}{read in from read_releases()}
 
-\item{lut_dir}{Directory with RMIS lookup tables if \code{NULL} (default) looks in Data/RMIS_LUTs}
+\item{lut_dir}{Directory with RMIS lookup tables defaults to \code{RMIS/LUTs} in working directory.}
 }
 \value{
 Dataframe of RMIS release data with decoded field names.

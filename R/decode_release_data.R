@@ -1,11 +1,11 @@
 #' Lookup foreign keys in RMIS release data
 #'
 #' @param RMIS_releases read in from read_releases()
-#' @param lut_dir Directory with RMIS lookup tables if `NULL` (default) looks in Data/RMIS_LUTs 
+#' @param lut_dir Directory with RMIS lookup tables defaults to `RMIS/LUTs` in working directory.
 #' @return Dataframe of RMIS release data with decoded field names.
 #' 
 #'
-decode_release_data <- function(RMIS_releases, lut_dir="RMIS/LUTs"){
+decode_release_data <- function(RMIS_releases, lut_dir=RMIS.globals$lut_dir){
  
   if(!dir.exists(lut_dir) | length(list.files(lut_dir))==0){
     download_luts(lut_dir=lut_dir)
