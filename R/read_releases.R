@@ -6,10 +6,9 @@
 #' @import readr
 #' @return A data frame of the raw RMIS release data, filtered for brood years between first_by and last_by (inclusive)
 #' 
-read_releases <- function(first_by=NULL, last_by=NULL, dir="RMIS"){
-  #require(readr)
- # if(is.null(dir)){dir <- "RMIS"}
-  file <- file.path(dir, get("rel_file",env=RMIS.globals))
+read_releases <- function(first_by=NULL, last_by=NULL, dir=RMIS.globals$rel_dir){
+
+  file <- file.path(dir, RMIS.globals$rel_file)
   
   if(!file.exists(file)){download_releases(dir=dir)}
   

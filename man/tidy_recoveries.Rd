@@ -4,7 +4,7 @@
 \alias{tidy_recoveries}
 \title{Lookup recovery location/fishery info}
 \usage{
-tidy_recoveries(recoveries, lut_dir = "RMIS/LUTs")
+tidy_recoveries(recoveries, lut_dir = RMIS.globals$lut_dir)
 }
 \arguments{
 \item{recoveries}{A dataframe of recovery data from RMIS}

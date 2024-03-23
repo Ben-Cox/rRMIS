@@ -8,8 +8,8 @@ filter_and_combine_recoveries(
   first_by,
   last_by,
   ...,
-  rec_dir = "RMIS/Recoveries",
-  lut_dir = "RMIS/LUTs"
+  rec_dir = RMIS.globals$rec_dir,
+  lut_dir = RMIS.globals$lut_dir
 )
 }
 \arguments{

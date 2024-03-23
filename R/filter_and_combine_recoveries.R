@@ -9,7 +9,7 @@
 #' @return
 #' @export
 #'
-filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir="RMIS/Recoveries", lut_dir="RMIS/LUTs" ){
+filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir=RMIS.globals$rec_dir, lut_dir=RMIS.globals$lut_dir){
   
   if(!dir.exists(rec_dir) || length(list.files(rec_dir))==0){stop("No recovery data found")}
   

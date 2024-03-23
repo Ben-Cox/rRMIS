@@ -5,7 +5,7 @@
 #' @return A dataframe with foreign keys decoded from LUTs
 #' @export
 #'
-tidy_recoveries <- function(recoveries,lut_dir="RMIS/LUTs") {
+tidy_recoveries <- function(recoveries,lut_dir=RMIS.globals$lut_dir) {
   #using("readxl") 
   
   RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#overies 
