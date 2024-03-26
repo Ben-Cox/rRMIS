@@ -2,11 +2,12 @@
 #' groups multiple tag codes released from the same hatchery if released within 3 weeks and 4.5 grams avg wt.
 #'
 #' @param release_data 
-#'
-#' @return
+#' @param days_between Max number of days between releases to group by, defaults to 21 (3 weeks).
+#' @param grams_within  Max difference in grams to be included in a group. 
+#' @return The supplied data frame with a release group ID `rel_id` added.
 #' 
 #'
-group_releases <- function(release_data){
+group_releases <- function(release_data, days_between=21, grams_within=4.5){
 
 d2 <- release_data %>% 
   filter(!is.na(last_release_date)) 
@@ -39,7 +40,7 @@ for (i in 1:length(unique_rels)) {
                 
                # Then identify which tags in d are within 21 days of the minimum date of all the tags in d,
                # the abs () is unnecessary
-               g <- which(abs(d$LastRelDate - min(d$LastRelDate,na.rm=TRUE)) <= 21 ) } 
+               g <- which(abs(d$LastRelDate - min(d$LastRelDate,na.rm=TRUE)) <= days_between ) } 
            
      # Otherwise, 
            else {
@@ -47,8 +48,8 @@ for (i in 1:length(unique_rels)) {
                # identify which tags were released within 21 days of the first release in d 
                # AND 
                # within 4.5 grams of the first release's avg.wt
-               g <- which(abs(d$LastRelDate - min(d$LastRelDate,na.rm=TRUE)) <= 21 &  
-                            abs(d$avg_weight - min(d$avg_weight[which.min(d$LastRelDate)])) <= 4.5)
+               g <- which(abs(d$LastRelDate - min(d$LastRelDate,na.rm=TRUE)) <= days_between &  
+                            abs(d$avg_weight - min(d$avg_weight[which.min(d$LastRelDate)])) <= grams_within)
            }
            
      # Assign the tags identifed by g (above) the current release number
