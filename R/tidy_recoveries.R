@@ -6,9 +6,8 @@
 #' @export
 #'
 tidy_recoveries <- function(recoveries,lut_dir=RMIS.globals$lut_dir) {
-  #using("readxl") 
-  
-  RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)#overies 
+
+  RMIS_recoveries <- recoveries %>%  mutate(temp_prefix = NA)# Recoveries 
 
   gear_lu <- read_csv(file.path(lut_dir,"gear.zip"), col_types = cols(fishery = "d"))
   
@@ -62,14 +61,12 @@ tidy_recoveries <- function(recoveries,lut_dir=RMIS.globals$lut_dir) {
   
   rec_fishery_lu <- bind_cols(unique_rec_locs, mgt_fishery=fishery_lu$mgt_fishery_name[mgt_fishery_lu]) %>% 
                     select(- temp_prefix)
-
   RMIS_recoveries %>% 
     left_join(rec_fishery_lu, by=c("recovery_location_code","fishery")) %>% 
-    #select(tag_code,recovery_date,mgt_fishery) %>% 
     left_join(select(filter(RMIS_locations,location_type==1), location_code, recovery_location=name, description, psc_region), by=c("recovery_location_code"="location_code")) %>% 
-    left_join(fishery_lu2 %>% mutate(fishery=as.character(fishery)),by="fishery") %>% 
-    left_join(gear_lu %>% mutate(fishery=as.character(fishery)), by = c("reporting_agency_recovery"="reporting_agency", "fishery", "gear")) %>% 
-    mutate(age=run_year - brood_year)
+    left_join(fishery_lu2 %>% mutate(fishery=as.character(fishery)),by="fishery") %>%
+    left_join(gear_lu %>% mutate(fishery=as.character(fishery)), by = c("reporting_agency"="reporting_agency", "fishery", "gear")) #%>% 
+    #mutate(age=run_year - brood_year)
       
 }
 

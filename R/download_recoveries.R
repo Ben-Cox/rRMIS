@@ -47,7 +47,7 @@ download_recoveries <- function(start_yr, end_yr, by_brood=TRUE, dir=RMIS.global
   if(n_files>20){message("This could take a second.")}     
       
   # Do download, read and combine the csvs with parallel for loop
-foreach::foreach(i=seq_along(file_list[[1]]), .inorder=FALSE) %dopar% {
+foreach::foreach(i=seq_along(file_list$files), .inorder=FALSE) %dopar% {
       # Download the files from download urls, save them to the local paths
        download.file(url=file_list$download_urls[i], destfile=file_list$files[i], quiet=TRUE)
        
