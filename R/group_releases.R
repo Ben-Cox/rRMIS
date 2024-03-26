@@ -2,8 +2,8 @@
 #' groups multiple tag codes released from the same hatchery if released within 3 weeks and 4.5 grams avg wt.
 #'
 #' @param release_data 
-#' @param days_between
-#' @param grams_within
+#' @param days_between Max number of days between releases to group by, defaults to 21 (3 weeks).
+#' @param grams_within  Max difference in grams to be included in a group. 
 #' @return The supplied data frame with a release group ID `rel_id` added.
 #' 
 #'

@@ -9,6 +9,9 @@ calc_tagrates(release_data)
 \arguments{
 \item{release_data}{}
 }
+\value{
+A tibble with juvenile tag rates for each release in \code{release_data}
+}
 \description{
 Calculate tagrates from reshaped release data
 }

@@ -5,10 +5,17 @@
 \title{Add group ids to releases
 groups multiple tag codes released from the same hatchery if released within 3 weeks and 4.5 grams avg wt.}
 \usage{
-group_releases(release_data)
+group_releases(release_data, days_between = 21, grams_within = 4.5)
 }
 \arguments{
 \item{release_data}{}
+
+\item{days_between}{Max number of days between releases to group by, defaults to 21 (3 weeks)}
+
+\item{grams_within}{Number of grams each group needs to be within to be added.}
+}
+\value{
+The supplied data frame with a release group ID \code{rel_id} added.
 }
 \description{
 Add group ids to releases
