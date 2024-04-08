@@ -1,0 +1,35 @@
+---
+title: "rRMIS"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{rRMIS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE, message=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This package downloads release and recovery information from from backup csv's available at [RMIS](https://www.rmpc.org/pub/data)
+
+```{r setup,message=FALSE, warning=FALSE}
+library(rRMIS)
+
+d1 <- get_release_data(first_by=2018, last_by=2018)
+
+d1
+```
+
+Data can also be accessed via the API with the [rmisr](https://github.com/MattCallahan-NOAA/rmisr) package.
+```{r message=FALSE, warning=FALSE,eval=FALSE}
+library(httr)
+library(jsonlite)
+my_key <- 'your api key'
+
+d2 <- rmisr::get_release(token=my_key,brood_year=2018)
+
+```
