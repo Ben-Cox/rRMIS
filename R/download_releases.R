@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples download_releases()
-download_releases <- function(url=RMIS.globals$url, dir=RMIS.globals$rel_dir){
+download_releases <- function(url=RMIS.globals$url, dir=RMIS.globals$rel_dir,rel_file=RMIS.globals$rel_file){
   
   url <- file.path(url, rel_file)
 
