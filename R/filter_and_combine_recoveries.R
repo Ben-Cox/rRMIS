@@ -36,8 +36,7 @@ filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir=RMIS.g
   
 # Read, lookup release info, filter in parallel
 df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("tidyverse")) %dopar% {
-readLines(files[i]) %>% paste0 %>% I() %>% 
-    read_csv(col_types=cols(.default="c", 
+    read_csv(files[i], col_types=cols(.default="c", 
                                       recovery_date=col_date(format="%Y%m%d"),
                                       run_year=col_integer(),
                                       species=col_integer(),
