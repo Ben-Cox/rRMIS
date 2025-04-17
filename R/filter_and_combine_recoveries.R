@@ -28,28 +28,29 @@ filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir=RMIS.g
                 select(species,species_name)
                                                                  
   # Set up clusters for parallel read/filter/combine
-      cl <- makeCluster(detectCores())
+      cl <- makeCluster(detectCores()-1)
       
   # Register cluster      
-      registerDoParallel(cl=cl)  
+      doParallel::registerDoParallel(cl=cl)  
   message("Reading recovery files, please be patient.")
+  
 # Read, lookup release info, filter in parallel
 df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("tidyverse")) %dopar% {
-
-    read_csv(files[i], col_types=cols(.default="c", 
+readLines(files[i]) %>% paste0 %>% I() %>% 
+    read_csv(col_types=cols(.default="c", 
                                       recovery_date=col_date(format="%Y%m%d"),
                                       run_year=col_integer(),
                                       species=col_integer(),
                                       estimated_number=col_double())) %>%
     # Look up recovery species
-    left_join(species_lu, by="species") %>% 
+    left_join(species_lu, by="species") %>%
     # Look up release info
     left_join(Releases, by=c("tag_code"="tag_code_or_release_id"), suffix=c("_recovery","")) %>%
-   
+
     # Filter by conditions passed in as '...'
     filter(!!!filter_conditions,
            # Type 5 recoveries can lead to double counting, check RMIS manual
-           sample_type!=5, 
+           sample_type!=5,
            # Only succesfully decoded recoveries
            tag_status==1,
            brood_year>=first_by,
