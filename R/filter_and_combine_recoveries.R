@@ -2,14 +2,15 @@
 #'
 #' @param first_by 
 #' @param last_by 
-#' @param rec_dir Directory where recovery data were downloaded
+#' @param rec_dir Directory where recovery data were downloaded. Defaults to RMIS.globals$rec_dir
+#' @param lut_dir Directory where RMIS LUTs were downloaded. Defaults to RMIS.globals$lut_dir
 #' @param ... filter conditions for RMIS fields in release data 
 #' @importFrom rlang quos
 #' @importFrom rlang !!!
 #' @return
 #' @export
 #'
-filter_and_combine_recoveries <- function(first_by, last_by, ..., rec_dir=RMIS.globals$rec_dir, lut_dir=RMIS.globals$lut_dir){
+filter_and_combine_recoveries <- function(first_by, last_by, rec_dir=RMIS.globals$rec_dir, lut_dir=RMIS.globals$lut_dir, ...){
   
   if(!dir.exists(rec_dir) || length(list.files(rec_dir))==0){stop("No recovery data found")}
   
@@ -64,12 +65,6 @@ df <- foreach(i=seq_along(files), .combine=rbind, .inorder=FALSE, .packages=c("t
   
 #  Return df      
   df
-      
-    # Write out the combined dataframe as a csv
-    #write.csv(df, paste0("GatherData/", "recoveries.csv"),row.names=FALSE)
-    
-    # Delete the downloaded csvs in the temp directory
-      #file.remove(file_list$local_paths) %>% invisible()
-  
+
 }
 
