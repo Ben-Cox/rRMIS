@@ -11,7 +11,7 @@ url <- get("url",RMIS.globals)
 
     if(!dir.exists(lut_dir)) {dir.create(lut_dir,recursive=TRUE) }
   
-  lut_filenames <- c("LC042_ALL_FULLSET.zip",
+  lut_filenames <- c("LC050_ALL_FULLSET.zip",
                     "run.zip",
                     "species.zip",
                     "study_type.zip",

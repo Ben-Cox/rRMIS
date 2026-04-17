@@ -5,7 +5,7 @@ RMIS.globals <- new.env()
 RMIS.globals$url <- "https://www.rmpc.org/pub/data/"
 
 # The complete release file
-RMIS.globals$rel_file <- "RL042_ALL_FULLSET.zip"
+RMIS.globals$rel_file <- "RL050_ALL_FULLSET.zip"
 
 # Folder to store downloads in working directory, if none specified
 RMIS.globals$root <- "RMIS"
