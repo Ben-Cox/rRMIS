@@ -5,23 +5,13 @@
 #' @return `NULL`
 #' @return Downloads lookup tables from RMIS into chosen dir
 #' @export
-download_luts <- function(lut_dir=RMIS.globals$lut_dir){
+download_luts <- function(lut_dir=RMIS.globals$lut_dir,lut_filenames=RMIS.globals$lut_filenames){
 
 url <- get("url",RMIS.globals)
 
     if(!dir.exists(lut_dir)) {dir.create(lut_dir,recursive=TRUE) }
   
-  lut_filenames <- c("LC050_ALL_FULLSET.zip",
-                    "run.zip",
-                    "species.zip",
-                    "study_type.zip",
-                    "marks.zip",
-                    "location_type.zip",
-                    "gear.zip", 
-                    "fishery.zip",
-                    "period.zip",
-                    "adclip_selective_fishery.csv"
-                    )
+      lut_filenames <- RMIS.globals$lut_filenames
 
     ftp_paths <- file.path(url, lut_filenames)
     dest_paths <- file.path(lut_dir, lut_filenames)                
