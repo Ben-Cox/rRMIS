@@ -19,7 +19,11 @@ library(rRMIS)
 #' @param lut_dir directory where releases are held
 #' @param dl_now  Logical determines if release file should be downloaded now (if already present in `rel_dir`). Defaults to FALSE.
 
-# this function downloads data from the RL_ALL table in RMIS pub/data, saves the RL file to a Data folder in working directory by default.
+# this function downloads data from the RL_ALL table in RMIS pub/data
+# saves the RL file to a Data folder in working directory by default.
+# downloads LUTs from RMIS pub/data
+# does lookups for foreign keys, converts dates
+# 
 d <- get_release_data(first_by=2016, last_by=2016)
 
 d
