@@ -14,3 +14,16 @@ RMIS.globals$root <- "RMIS"
 RMIS.globals$rel_dir <- file.path(RMIS.globals$root,"Releases")
 RMIS.globals$rec_dir <- file.path(RMIS.globals$root,"Recoveries")
 RMIS.globals$lut_dir <- file.path(RMIS.globals$root,"LUTs")
+
+# names of lookup tables in pub/data
+RMIS.globals$lut_filenames <- c(RMIS.globals$location_file, 
+                    "run.zip",
+                    "species.zip",
+                    "study_type.zip",
+                    "marks.zip",
+                    "location_type.zip",
+                    "gear.zip", 
+                    "fishery.zip",
+                    "period.zip",
+                    "adclip_selective_fishery.csv"
+                    )
