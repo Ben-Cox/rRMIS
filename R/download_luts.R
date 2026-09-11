@@ -5,7 +5,7 @@
 #' @return `NULL`
 #' @return Downloads lookup tables from RMIS into chosen dir
 #' @export
-download_luts <- function(lut_dir=RMIS.globals$lut_dir,lut_filenames=RMIS.globals$lut_filenames){
+download_luts <- function(lut_dir=RMIS.globals$lut_dir, lut_filenames=RMIS.globals$lut_filenames){
 
 url <- get("url",RMIS.globals)
 
