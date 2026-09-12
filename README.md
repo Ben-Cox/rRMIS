@@ -16,7 +16,7 @@ devtools::install_github("Ben-Cox/rRMIS")
 ```r
 library(rRMIS)
 
-When RMIS data vesions or the pub/data url changes, download functions will break. 
+When RMIS data versions or the pub/data url changes, download functions will break. 
 User can update the global values for the current session with:
 
 #' \dontrun{
