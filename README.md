@@ -19,11 +19,11 @@ library(rRMIS)
 When RMIS data vesions or the pub/data url changes, download functions will break. 
 User can update the global values for the current session with:
 
-\dontrun{
-set_url("the_new_url.com")
-set_release_filename("RL0XX_ALL_FULLSET.zip")
-set_location_filename("LC0XX_ALL_FULLSET.zip")
-}
+#' \dontrun{
+#' set_url("the_new_url.com")
+#' set_release_filename("RL0XX_ALL_FULLSET.zip")
+#' set_location_filename("LC0XX_ALL_FULLSET.zip")
+#'}
 
 # this function downloads release data from RMIS pub/data for a specified range of brood years.
 # saves the file to a Data folder in working directory by default.
